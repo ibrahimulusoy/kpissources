@@ -1,0 +1,128 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+<hr>
+
+<h2>Manage <b> USERS</b>
+    <button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#frmModalUser">Add New User</button> </h2>
+
+<div class="card">
+  <div class="card-body">
+    <table id="tableUsers" class="table table-bordered table-sm table-striped table-hover">
+      <thead>
+      <tr>
+        <th data-id-field="user_id" style="width: 5%;">ID</th>
+        <th style="width: 12%;">District</th>
+        <th style="width: 14%;">Campus</th>
+        <th style="width: 13%;">Department</th>
+        <th style="width: 10%; font-style: oblique;">User Name</th>
+        <th style="width: 15%;">Full Name</th>
+        <th style="width: 17%;">e_mail</th>
+        <th style="width: 17%;">Prc. User</th>
+        <th style="width: 5%;">A/P</th>
+        <th style="width: 6%;">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for c in users %}
+      <tr>
+          <td>{{ c.user_id }} </td>
+          <td>{{ c.district_name }} </td>
+          <td>{{ c.campus_name }} </td>
+          <td>{{ c.department_name }} </td>
+          <td style="font-style: oblique; font-weight: bold;">{{ c.user_name }} </td>
+          <td>{{ c.full_name }} </td>
+          <td>{{ c.e_mail }} </td>
+          <td>{{ c.process_user }} </td>          
+          <td>{{ c.status }} </td>
+          <td>
+            <a href="" class="btn btn-info btn-xs" data-toggle="modal" data-target="#"> <b> Edit </b></a>
+          </td>
+
+      </tr>
+      <!-- Modal Edit Category-->
+<!--
+        <div id="frmModalRoleEdit{{ c.RowID }}" class="modal fade" role = "dialog">
+            <div class="modal-dialog">
+            <div class="modal-content">
+        <div class="modal-header"><h4 class="modal-title">Update Role Weight</h4></div>
+            <div class="modal-body">
+            <form action="{{ url_for('category_upd') }}" method="POST">
+            <div class="form-group">
+                <label>Department</label>
+                <input type="hidden"  name="RowID" value="{{ c.RowID }}">
+                <input type="text" class="form-control" name = "Department" value = "{{ c.Department }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Category Name</label>
+                <input type="text" class="form-control" name = "Category" value = "{{ c.Category }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Weight</label>
+                <input type="number" step=".1" max="4" min = "0" class = "form-control" name = "Weight" value="{{ c.Weight }}">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Update Role</button>
+            </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Form</button>
+            </div>
+        </div>
+        </div>
+        </div>   
+    -->    
+      {% endfor %}
+    </tbody>
+      <tfoot>
+      <tr>
+        <th>ID</th>
+        <th>District</th>
+        <th>Campus</th>
+        <th>Department</th>
+        <th>User Name</th>
+        <th>Full Name</th>
+        <th>e_mail</th>
+        <th>Prc. User</th>
+        <th>A/P</th>
+        <th>Action</th>
+      </tr>
+      </tfoot>
+    </table>
+   </div>  
+
+  <!-- Modal Add Employee-->
+  <div id="frmModalUsers" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header"><h4 class="modal-title">Add New User</h4></div>
+           <div class="modal-body">
+				<form action="" method="POST">
+				  <div class="form-group">
+				   <label>Name:</label>
+				   <input type="text" class="form-control" name="name" required="1">
+				  </div>
+				  <div class="form-group">
+				   <label>Email:</label>
+				   <input type="email" class="form-control" name="email" required="1">
+				  </div>
+				  <div class="form-group">
+				   <label>Phone:</label>
+				   <input type="number" class="form-control" name="phone" required="1">
+				  </div>
+				  <div class="form-group">
+				  <button class="btn btn-primary" type="submit">Add User</button>
+				  </div>
+				 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+

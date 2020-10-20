@@ -1,0 +1,154 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+    <div class="col-10">
+        <div class="card border-0 d-block guide-preview">
+            <div class="p-2 ml-3 d-flex align-items-center">
+                    <form action="/rep_list_kpi" method="POST">
+                      <div class="row">
+                          <div class="form-group">
+                            <label>Semestre</label>
+                            <select class="form-control" id="cmbTerm" name="cmbTerm" style="width: min-content;">
+                                {% for l in listTerms %}
+                                  {% if prevVar is defined and l.TermKey == prevVar.TermKey %}
+                                    <option value="{{ l.TermKey}}" selected>{{ l.Term }}</option>
+                                  {% else %}
+                                    <option value="{{ l.TermKey}}">{{ l.Term }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+    
+                          <div class="form-group">
+                            <label>District</label>
+                            <select class="form-control" id="cmbDistrict" name="cmbDistrict" style="width: min-content;" onchange='if(this.value != 0) { this.form.submit(); }'>
+                                <option value="0">HARMONY Public Schools</option>
+                                {% for l in listDists %}
+                                  {% if prevVar is defined and l.DistrictKey == prevVar.DistrictKey %}
+                                  <option value="{{ l.DistrictKey}}" selected>{{ l.District }}</option>
+                                  {% else %}
+                                    <option value="{{ l.DistrictKey}}">{{ l.District }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Campus</label>
+                            <select class="form-control" id="cmbCampus" name="cmbCampus" style="width: min-content;">
+                                <option value="0">All Campuses</option>
+                                {% for l in listCamps %}
+                                  {% if prevVar is defined and l.CampusKey == prevVar.CampusKey %}
+                                  <option value="{{ l.CampusKey}}" selected>{{ l.CampusShort }}</option>
+                                  {% else %}
+                                    <option value="{{ l.CampusKey}}">{{ l.CampusShort }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Department</label>
+                            <select class="form-control" id="cmbDepartment" name="cmbDepartment" style="width: min-content;" onchange='if(this.value != 0) { this.form.submit(); }'>
+                                <option value="0">All Departments</option>
+                                {% for l in listDepts %}
+                                  {% if prevVar is defined and l.DepartmentKey == prevVar.DepartmentKey %}
+                                  <option value="{{ l.DepartmentKey}}" selected>{{ l.Department }}</option>
+                                  {% else %}
+                                    <option value="{{ l.DepartmentKey}}">{{ l.Department }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Category</label>
+                            <select class="form-control" id="cmbCategory" name="cmbCategory" style="width: min-content;">
+                                <option value="0">All Categories</option>
+                                {% for l in listCats %}
+                                  {% if prevVar is defined and l.CategoryKey == prevVar.CategoryKey %}
+                                  <option value="{{ l.CategoryKey}}" selected>{{ l.CategoryShort }}</option>
+                                  {% else %}
+                                    <option value="{{ l.CategoryKey}}">{{ l.CategoryShort }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+                          
+                          <div class="form-group ml-3 mt-2"> <br>
+                              <button name="btnGetScores" type="submit" class="btn btn-primary" style="font-weight: bolder;">GET SCORES</button>
+                          </div>
+                        </div>
+                      </form>
+            </div>    
+        </div>    
+    </div>    
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-md-12">
+            <div class="card card-primary card-outline" >
+              <div class="card-header" style="text-align: justify;" >
+                <h3 class="card-title" style="font-style: oblique; ">Filtered KPI Scores</h3>
+  
+                <!-- /.card-tools -->
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableKPIList" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>District</th>
+                            <th>Department</th>
+                            <th>Category</th>
+                            <th>Campus</th>
+                            <th>KPI Name</th>
+                            <th style="width: 40px;">Weight</th>
+                            <th style="width: 40px;">Score</th>                            
+                            <th>Raw Score</th>                            
+                            <th>Details</th>
+                            <th>Descrip.</th>
+                            <th>Artifact</th>                            
+                            <th>Critical KPI Warning</th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for s in listScore %}
+                      <tr>
+                       <td>{{ s.DistrictShort }}</td>
+                       <td>{{ s.DepartmentShort }}</td>
+                       <td>{{ s.CategoryShort }}</td>
+                       <td>{{ s.CampusShort }}</td>
+                       <td>{{ s.KPI_Name }}</td>
+                       <td>{{ s.Weight }}</td>
+                       <td style="background-color: lightgrey; font-size: larger; font-weight: bolder;">{{ s.Score }}</td>
+                       <td>{{ s.Raw_Score }}</td>
+                       <td>{{ s.Raw_Score_Details }}</td>
+                       <td><a href="" target="_blank" data-toggle="tooltip"title="{{ s.Description }}">Descr.</a> </td>
+                       <td><a href="{{ s.Artifact_URL }}"></a>{% if s.Artifact_URL|length %} Link {% endif %} </td>
+                       <td></td>
+                     </tr>
+                     {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </section>
+      <!-- /.content -->
+      
+
+      
+{% endblock %}

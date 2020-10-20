@@ -1,0 +1,65 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+      <br>
+  
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-md-12">
+            <div class="card card-primary card-outline" >
+              <div class="card-header" style="text-align: justify;" >
+                <h3 class="card-title" style="font-style: oblique; ">Deleted Task Assigments</h3>
+  
+                <!-- /.card-tools -->
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableInbox" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 14%">Assigned To</th>
+                            <th style="width: 16%;">Task Name</th>
+                            <th style="width: 26%;">Task Subject</th>
+                            <th style="width: 12%;">Assign Time</th>
+                            <th style="width: 12%">Department</th>
+                            <th style="width: 12%;">Archive Time</th>
+                            <th style="width: 20%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in myBox %}
+                     <tr>
+                      <td>{{ m.full_name }}</td>
+                      <td>{{ m.task_name }}</a> </td>
+                      <td>{{ m.description }}</td>
+                      <td>{{ m.assign_date_time }}</td>
+                      <td>{{ m.Department }}</td>
+                      <td>{{ m.archive_date_time }}</td>
+                      <td>
+                        <a href="/home_undo_task/{{ m.row_id }}" class="btn btn-success btn-xs" onclick="return confirm('Are you sure to undo this task?')">Undo</a> 
+                        <a href="/home_delete_task/{{ m.row_id }}" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure to delete this task?')">Delete</a> 
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </section>
+      <!-- /.content -->
+      
+
+{% endblock %}

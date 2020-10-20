@@ -1,0 +1,184 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+    <!-- Main content -->
+      <!-- Main content -->
+      <section class="content">
+        <div><h4 style="font-style: oblique; text-align:justify;"><strong>Automatic and manual entry summary of KPI Metric Scores </strong></h4></div>
+        <br>
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-md-4 ">
+            <div class="card card-primary card-outline p-1" >
+              <div class="card-header"><h3 class="card-title" style="font-style: oblique;"><strong>District level, Automatic Calculate</strong></h3></div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableDA" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 60%">Department</th>
+                            <th style="width: 20%">Target </th>
+                            <th style="width: 20%;">Calculated </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for m in listDA %}
+                        {% if m.Real_Count == 0: %}
+                          <tr style="color:crimson;">
+                        {% elif m.Real_Count >= m.Target_Count: %}
+                          <tr style="color: green;">
+                        {% elif m.Real_Count > 0 and m.Real_Count < m.Target_Count: %}
+                          <tr style="color:navy;">
+                        {% else: %}
+                          <tr>
+                        {% endif %}
+                          <td>{{ m.DepartmentShort }}</td>
+                          <td>{{ m.Target_Count }}</td>
+                          <td>{{ m.Real_Count }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+
+          <div class="col-md-4">
+            <div class="card card-primary card-outline  p-1" >
+              <div class="card-header"><h3 class="card-title" style="font-style: oblique;"><strong>District level, Manuel Calculate</strong></h3></div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableDM" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 60%">Department</th>
+                            <th style="width: 20%">Target </th>
+                            <th style="width: 20%;">Calculated </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in listDM %}
+                      {% if m.Real_Count == 0: %}
+                        <tr style="color:crimson;">
+                      {% elif m.Real_Count >= m.Target_Count: %}
+                        <tr style="color: green;">
+                      {% elif m.Real_Count > 0 and m.Real_Count < m.Target_Count: %}
+                        <tr style="color:navy;">
+                      {% else: %}
+                        <tr>
+                      {% endif %}     
+                      <td>{{ m.DepartmentShort }}</td>
+                      <td>{{ m.Target_Count }}</td>
+                      <td>{{ m.Real_Count }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-md-4">
+            <div class="card card-primary card-outline  p-1" >
+              <div class="card-header"><h3 class="card-title" style="font-style: oblique;"><strong>Campus level, Automatic Calculate</strong></h3></div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableCA" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 60%">Department</th>
+                            <th style="width: 20%">Target </th>
+                            <th style="width: 20%;">Calculated </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in listCA %}
+                      {% if m.Real_Count == 0: %}
+                        <tr style="color:crimson;">
+                      {% elif m.Real_Count >= m.Target_Count: %}
+                        <tr style="color: green;">
+                      {% elif m.Real_Count > 0 and m.Real_Count < m.Target_Count: %}
+                        <tr style="color:navy;">
+                      {% else: %}
+                        <tr>
+                      {% endif %}
+                      <td>{{ m.DepartmentShort }}</td>
+                      <td>{{ m.Target_Count }}</td>
+                      <td>{{ m.Real_Count }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+
+          <div class="col-md-4">
+            <div class="card card-primary card-outline  p-1" >
+              <div class="card-header"><h3 class="card-title" style="font-style: oblique;"><strong>Campus level, Manuel Calculate</strong></h3></div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableCM" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 60%">Department</th>
+                            <th style="width: 20%">Target </th>
+                            <th style="width: 20%;">Calculated </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in listCM %}
+                      {% if m.Real_Count == 0: %}
+                        <tr style="color:crimson;">
+                      {% elif m.Real_Count >= m.Target_Count: %}
+                        <tr style="color: green;">
+                      {% elif m.Real_Count > 0 and m.Real_Count < m.Target_Count: %}
+                        <tr style="color:navy;">
+                      {% else: %}
+                        <tr>
+                      {% endif %}
+
+                      <td>{{ m.DepartmentShort }}</td>
+                      <td>{{ m.Target_Count }}</td>
+                      <td>{{ m.Real_Count }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+
+      </section>
+      <!-- /.content -->
+      
+
+{% endblock %}

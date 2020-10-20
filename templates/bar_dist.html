@@ -1,0 +1,100 @@
+{% extends 'master_page.html' %}
+{% block body %}
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+
+<div class="row">    
+  <div class="col-10">    
+    <div class="card border-0 shadow mb-5 d-block guide-preview">
+      <div class="p-4 d-flex align-items-center w-100">
+        <canvas id="chartDists" width="800px" height="200px" style="background-color: lightgoldenrodyellow"></canvas>
+     </div>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+
+
+var ctx2 = document.getElementById('chartDists').getContext('2d');
+steps = 1
+max = 4
+
+var chartDists = new Chart(ctx2, 
+{
+    type: 'bar',
+    title:'DISTRICT SCORE COMPARES BY TERM',
+    scaleOverride: true,
+    scaleSteps: steps,
+    scaleStepWidth: Math.ceil(max / steps),
+    scaleStartValue: 0,
+    scaleShowVerticalLines: true,
+    scaleShowGridLines : true,
+    barShowStroke : true,
+    scaleShowLabels: true,
+
+    data: {
+        labels: 
+        [
+          {% for item in chartValuesDist %}
+           "{{ item.District }}",
+          {% endfor %}
+        ],
+        datasets: 
+        [{
+            label: 'Term 1',
+            data: [
+            {% for item in chartValuesDist %}
+               "{{ item.Score }}",
+              {% endfor %}              
+        ],              
+        backgroundColor: ['rgba(75, 192, 192, 1)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)'],
+        borderWidth: 1
+        },
+    
+        {
+            label: 'Term 2',
+            data: [
+            {% for item in chartValuesDist %}
+               "{{ item.Score + 0.5 }}",
+              {% endfor %}              
+        ],              
+        backgroundColor: ['rgba(75, 192, 192, 1)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)'],
+        borderWidth: 1
+        },
+    
+        {
+            label: 'Term 3',
+            data: [
+            {% for item in chartValuesDist %}
+               "{{ item.Score - 0.3 }}",
+              {% endfor %}              
+        ],              
+        backgroundColor: ['rgba(75, 192, 192, 1)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)'],
+        borderWidth: 1
+        }    ]
+    },    
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            text: 'All District All Terms Scores'
+        }
+    }
+});
+
+
+
+</script>
+{% endblock %}

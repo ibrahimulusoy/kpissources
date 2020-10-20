@@ -1,0 +1,173 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+  {% if openType != 0 %}
+  <section class="section-preview text-center border-1" style="background-color: gainsboro;">
+    Your workflow steps and status
+    <button class="btn text-success waves-effect waves-light" > Category Check <i class="fa arrow-down"></i></button>
+    <button class="btn text-primary waves-effect waves-light"> KPI Check<i class="fa fa-arrow-right"></i></button>
+    <button class="btn text-danger waves-effect waves-light"> Campus Level Manuel KPI Score Entry <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+    <button class="btn text-danger waves-effect waves-light" > District Level Manuel KPI Score Entry <i class="fa fa-arrow-right"></i></button>
+  </section>
+  <br>
+  {% endif %}
+<hr>
+
+{% if openType == 0 %}
+  <h2>KPI view and updating<button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#frmModalKPI">Add New KPI</button> </h2>
+{% else %}
+  <h2>KPI view and updating</h2>
+{% endif %}
+
+<div class="card">
+  <div class="card-body">
+    <table id="tableKPI" class="table table-bordered table-striped table-hover table-sm">
+      <thead>
+      <tr>
+        <th data-id-field="RowID"  style="width: 8%;">Row ID</th>
+        <th style="width: 8%;">KPI Key</th>
+        <th style="width: 20%;">Department</th>
+        <th style="width: 20%;">Category</th>
+        <th style="width: 30%;">KPI Name</th>
+        <th style="width: 7%;">Weight</th>
+        <th style="width: 5%;">Order</th>
+        <th style="width: 5%;">Version</th>
+        <th style="width: 5%;">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for c in kpilist %}
+      <tr>
+          <td>{{ c.RowID }} </td>
+          <td>{{ c.KPIKey }} </td>
+          <td>{{ c.Department }} </td>
+          <td>{{ c.Category }} </td>
+          <td>{{ c.KPI }} </td>
+          <td>{{ c.Weight }} </t>
+          <td>{{ c.DisplayOrder }} </td>
+          <td>{{ c.Version }} </td>
+          <td>
+            <a href="/kpi_upd/{{ c.RowID }}" class="btn btn-info btn-xs" data-toggle="modal" data-target="#frmModalKPIEdit{{ c.RowID }}"> <b> Edit </b></a>
+            <!-- <a href="/delete/{{ c.RowID }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete ?')">Delete</a> -->
+        </td>
+      </tr>
+        <!-- Modal Edit CampKPIus-->
+        <div id="frmModalKPIEdit{{ c.RowID }}" class="modal fade" role = "dialog">
+            <div class="modal-dialog">
+            <div class="modal-content">
+        <div class="modal-header"><h4 class="modal-title">Update KPI Weight</h4></div>
+            <div class="modal-body">
+            <form action="{{ url_for('kpi_upd') }}" method="POST">
+            <div class="form-group">
+                <label>KPI Key</label>
+                <input type="hidden"  name="RowID" value="{{ c.RowID }}">
+                <input type="text" class="form-control" name = "KPIKey" value = "{{ c.KPIKey }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" class="form-control" name = "Department" value = "{{ c.Department }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" class="form-control" name = "Category" value = "{{ c.Category }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>KPI Name</label>
+              <input type="text" class="form-control" name = "KPIName" value = "{{ c.KPI }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>Weight</label>
+              <input type="number" step=".1" max="4" min = "0" class = "form-control" name = "Weight" value="{{ c.Weight }}">
+            </div>
+            <div class="form-group">
+              <label>Order</label>
+              <input type="text" class="form-control" name = "DisplayOrder" value = "{{ c.DisplayOrder }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <input type="text" class="form-control" name = "IsActive" value = "{{ c.IsActive }}" readonly>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Update KPI</button>
+            </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Form</button>
+            </div>
+        </div>
+        </div>
+        </div>       
+      {% endfor %}
+    </tbody>
+      <tfoot>
+      <tr>
+        <th>Row ID</th>
+        <th>KPI Key</th>
+        <th>Department</th>
+        <th>Category</th>
+        <th>KPI Name</th>
+        <th>Weight</th>
+        <th>Order</th>
+        <th>Version</th>
+        <th>Action</th>
+      </tr>
+      </tfoot>
+    </table>
+   </div>  
+
+  <!-- Modal Add KPI-->
+  <div id="frmModalKPI" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header"><h4 class="modal-title">Add New KPI</h4></div>
+           <div class="modal-body">
+				<form action="/kpi_insert" method="POST">
+				  <div class="form-group"><label>Row ID:</label><input type="number" class="form-control" name="RowID" required></div>
+				  <div class="form-group"><label>KPI Key:</label><input type="number" class="form-control" name="KPIKey" required></div>
+          <div class="form-group"><label>KPI Name:</label><input type="text" class="form-control" name="KPI" required></div>
+          <div class="form-group"><label>Description:</label><input type="text" class="form-control" name="Description" required></div>
+          <div class="form-group"><label>Weight:</label><input type="number" class="form-control" name="Weight" required></div>
+          <div class="form-group"><label>Display Order:</label><input type="number" class="form-control" name="DisplayOrder" required></div>
+          <div class="form-group">
+            <label>Department:</label>
+            <select class="form-control" id="cmbDepartment" name="cmbDepartment" style="width: min-content;">
+              {% for l in listDept %}
+                <option value="{{ l.RowID}}">{{ l.DepartmentShort }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Category:</label>
+            <select class="form-control" id="cmbCategory" name="cmbCategory" style="width: min-content;">
+              {% for l in listCat %}
+                <option value="{{ l.RowID}}">{{ l.CategoryShort }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group"><label>Version:</label><input type="number" class="form-control" name="Version" required></div>
+          <div class="form-group"><label>Self Link:</label><input type="text" class="form-control" name="KPISelfLink" ></div>
+          <div class="form-group"><label>Score Definition:</label><input type="text" class="form-control" name="ScoreDefinition" ></div>
+          <div class="form-group"><label>Score Calculation Details:</label><input type="text" class="form-control" name="ScoreCalculationDetails" ></div>
+          <div class="form-group"><label>Source:</label><input type="text" class="form-control" name="Source" ></div>
+          
+          <div class="form-group"><button class="btn btn-primary" type="submit">Add KPI</button></div>
+				 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        {% if openType != 0 %}
+        <a href="/pr_category" class="btn btn-primary btn-default active" style="height: min-content;" role="button" aria-pressed="true">Back</a>
+          <a href="/pr_cmp_man_entry" class="btn btn-success active" style="height: min-content;" role="button" aria-pressed="true">Next</a>
+        {% endif %}
+      </div>
+
+</div>
+</div>
+{% endblock %}
+

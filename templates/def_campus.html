@@ -1,0 +1,125 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+{% if openType != 0 %}
+  <section class="section-preview text-center border-1" style="background-color: gainsboro;">
+    Your workflow steps and status
+    <button class="btn text-success waves-effect waves-light"> Department Check <i class="fa fa-check"></i></button>
+    <button class="btn text-success waves-effect waves-light"> District Check<i class="fa fa-check"></i></button>
+    <button class="btn text-primary waves-effect waves-light"> Campus Check <i class="fa fa-arrow-down"></i></button>
+  </section>
+{% endif %}
+<hr>
+
+{% if openType == 0 %}
+<h2>Campuses view and updating<button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#frmModalCampus">Add New Campus</button> </h2>
+{% else %}
+<h2>Campuses view and updating</h2>
+{% endif %}
+
+
+<div class="card">
+  <div class="card-body">
+    <table id="tableCampus" class="table table-bordered table-striped table-hover table-sm ">
+      <thead>
+      <tr>
+        <th data-id-field="RowID" style="width: 8%;">Row ID</th>
+        <th style="width: 13%;">District</th>
+        <th style="width: 10%;">Campus Key</th>
+        <th style="width: 25%;">Campus Name</th>
+        <th style="width: 20%;">Short Name</th>
+        <th style="width: 10%;">Weight</th>
+        <th style="width: 7%;">Active</th>
+        <th style="width: 8%;">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for c in campuses %}
+      <tr>
+          <td>{{ c.RowID }} </td>
+          <td>{{ c.DistrictName }} </td>
+          <td>{{ c.CampusKey }} </td>
+          <td>{{ c.Campus }} </t>
+          <td>{{ c.CampusShort }} </td>
+          <td>{{ c.Campus_Weight }} </td>
+          <td>{{ c.IsActive }} </td>
+          <td>
+            <a href="/campus_upd/{{ c.RowID }}" class="btn btn-info btn-xs" data-toggle="modal" data-target="#frmModalCampusEdit{{ c.RowID }}"> <b> Edit </b></a>
+            <!-- <a href="/delete/{{ c.RowID }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete ?')">Delete</a> -->
+        </td>
+      </tr>
+        <!-- Modal Edit Campus-->
+        <div id="frmModalCampusEdit{{ c.RowID }}" class="modal fade" role = "dialog">
+            <div class="modal-dialog">
+            <div class="modal-content">
+        <div class="modal-header"><h4 class="modal-title">Update Campus Weight</h4></div>
+            <div class="modal-body">
+            <form action="{{ url_for('campus_upd') }}" method="POST">
+            <div class="form-group">
+                <label>District Name</label>
+                <input type="hidden"  name="RowID" value="{{ c.RowID }}">
+                <input type="text" class="form-control" name = "District" value = "{{ c.DistrictName }}" readonly>
+            </div>
+            <div class="form-group"><label>Campus Name</label><input type="text" class="form-control" name = "Campus" value = "{{ c.Campus }}" readonly></div>
+            <div class="form-group"><label>Weight</label><input type="number" step=".1" max="4" min = "0" class = "form-control" name = "Weight" value="{{ c.Campus_Weight }}"></div>
+            <div class="form-group"><button class="btn btn-primary" type="submit">Update Campus</button></div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Form</button>
+            </div>
+        </div>
+        </div>
+        </div>       
+      {% endfor %}
+    </tbody>
+      <tfoot><tr>
+        <th>Row ID</th>
+        <th>District</th>
+        <th>Campus Key</th>
+        <th>Campus Name</th>
+        <th>Short Name</th>
+        <th>Weight</th>
+        <th>Active</th>
+        <th>Action</th>
+      </tr>
+      </tfoot>
+    </table>
+   </div>  
+
+  <!-- Modal Add Campus-->
+  <div id="frmModalCampus" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header"><h4 class="modal-title">Add New Campus</h4></div>
+           <div class="modal-body">
+				<form action="/campus_insert" method="POST">
+				  <div class="form-group"><label>Row ID:</label><input type="number" class="form-control" name="RowID" required></div>
+				  <div class="form-group"><label>Campus Key:</label><input type="number" class="form-control" name="CampusKey" required></div>
+				  <div class="form-group"><label>District Row ID:</label><input type="number" class="form-control" name="District_RowID" required></div>
+				  <div class="form-group"><label>Integration District ID:</label><input type="number" class="form-control" name="Integration_DistrictID" required></div>
+				  <div class="form-group"><label>Campus Name:</label><input type="text" class="form-control" name="Campus" required></div>
+				  <div class="form-group"><label>Short Name:</label><input type="text" class="form-control" name="CampusShort" required></div>
+				  <div class="form-group"><label>Campus Weight:</label><input type="number" class="form-control" name="Campus_Weight" step=".1" max="4" min = "0" required></div>
+      
+          <div class="form-group"><button class="btn btn-primary" type="submit">Add New Campus</button></div>
+				 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="modal-footer">
+    {% if openType != 0 %}
+    <a href="/pr_district" class="btn btn-primary btn-default active" style="height: min-content;" role="button" aria-pressed="true">Back</a>
+    <a href="/home" class="btn btn-success btn-default active" style="height: min-content;" role="button" aria-pressed="true">Complete</a>
+    {% endif %}
+    
+  </div>
+
+</div>
+</div>
+{% endblock %}
+

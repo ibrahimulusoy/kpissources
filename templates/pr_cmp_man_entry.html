@@ -1,0 +1,466 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+<section class="section-preview text-center border-1" style="background-color: gainsboro;">
+  Your workflow steps and status
+  <button class="btn text-success waves-effect waves-light" > Category Check <i class="fa fa-check"></i></button>
+  <button class="btn text-success waves-effect waves-light"> KPI Check<i class="fa fa-check"></i></button>
+  <button class="btn text-primary waves-effect waves-light"> Campus Level Manuel KPI Score Entry <i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+  <button class="btn text-danger waves-effect waves-light" > District Level Manuel KPI Score Entry <i class="fa fa-arrow-right"></i></button>
+</section>
+<br>
+
+<div class="row">
+  <div class="col-9">
+    <div class="card border-0 d-block guide-preview bg-info shadow" style=" text-align: center; height: 30px;">CAMPUS LEVEL MANUEL KPI SCORE ENTRY
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="card border-1 d-block guide-preview bg-info shadow" style="text-align: center; height: 30px;">
+      <strong> {{ DeptName }}    &    {{currentTerm }} </strong>      
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  
+  <div class="col-9">
+    <div class="row">
+      <div class="card border-0 d-block guide-preview bg-info">
+        <div class="p-1 d-flex align-items-center ml-1 mr-1">
+          <section class="section-preview text-center" name="secDistrict" id="secDistrict">
+            {% for s in listDists %}
+            <button 
+            {% if selDist is defined %}
+              {% if selDist|int == s.DistrictKey|int %}
+              class="btn bg-danger waves-effect waves-dark" 
+              {% else %}
+              class="btn bg-light waves-effect waves-dark" 
+              {% endif %}
+            {% else %}
+              class="btn bg-light waves-effect waves-dark" 
+            {% endif %}
+                onclick="GetCampusesOfSelectedDistrict('{{ s.RowID}}', '{{ s.DistrictKey}}')"
+                    id="btnDist{{ s.DistrictKey}}" name="btnDist{{ s.DistrictKey}}"  value="{{ s.DistrictKey}}" style="width: 140px;">{{ s.DistrictShort}}</button>
+            {% endfor %}
+          </section>
+        </div>
+      </div> 
+    </div> 
+
+    <div class="row">
+      <div class="card border-0 d-block guide-preview rounded-sm bg-info" style="width: max-content;">
+        <div class="p-1 d-flex ml-1 mr-1">
+          <div class="btn-group">
+            <button type="button" class="btn btn-light text-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Select KPI
+            </button>
+            <div class="dropdown-menu"  id="ComboKPI" name="ComboKPI">
+              <a class="dropdown-header" href="#">Category and KPI Name</a>
+              {% for s in listKPI %}
+                <a class="dropdown-item" value = "{{s.RowID}}" href="#"
+                    onclick="return SetSelectedValues('{{s.RowID}}', '{{s.KPIKey}}', '{{s.KPI}}', '{{ s.CategoryKey}}', '{{ s.Category}}', '{{s.Description}}', '{{s.Weight}}', '{{selDist}}')">{{ s.Category}} --> {{s.KPI}} </a>
+              {% endfor %}
+            </div>
+          </div>
+          <div id="txtKPIKey" class="p-2 text-primary bg-light ml-2">{{defKPI[1]}}</div> 
+          <form name="hiddenForm" type="hidden" action="/pr_cmp_man_entry" method="POST">
+            <input type="hidden" id = "txtKPIRowID" name = "txtKPIRowID" value= '{{defKPI[0]}}' >
+            <input type="hidden" id = "txtKPICategoryKey" name = "txtKPICategoryKey" value= '{{defKPI[3]}}'>
+            <input type="hidden" id = "txtKPIWeight" name = "txtKPIWeight" value= '{{defKPI[9]}}'>
+            <input type="hidden" id = "txtArtifactURL" name = "txtArtifactURL" value="">
+            <input type="hidden" id = "txtDistrictRowID" name = "txtDistrictRowID" value='{{selDist}}'>            
+          </form>   
+          <div id="txtKPICategory" class="p-2 text-primary bg-light ml-1">{{defKPI[4]}}</div> 
+          <div id="txtKPIName" class="p-2 text-primary bg-light ml-1">{{defKPI[6]}}</div> 
+
+          <div class="align-items-center ml-3">
+            <form action="/pr_cmp_man_entry" method="POST">
+              <input type="hidden" id = "varDistrictKey" name = "varDistrictKey" 
+              {% if selDist is defined %}
+                value="{{ selDist }}"
+              {% endif %}
+              >
+              
+            </form>
+          </div>
+                    
+          <br>
+        </div>
+
+        <!-- <div id="txtKPIDesc" class="p-2 text-secondary bg-light ml-2 mb-2 mr-1" data-placeholder = "Description" >Description</div> -->
+
+      </div>
+    </div>         
+  </div>  
+  
+  <div class="col-3">          
+    <div class="small-box bg-info border-2 shadow" style="background-color: lightyellow; color: maroon;">
+      <div class="p-2 ml-2">
+        <strong> Score Entry Information</strong> <br> 
+        <small>
+          1) You should choose district, department and get related KPI list. <br>
+          2) Type score of each KPI. <br>
+          3) Save all typed scores for the selected department and district.
+        </small>
+      </div>
+    </div>    
+  </div>
+  
+</div>
+
+
+{% if listCamps is defined %}
+
+<div class="card">
+  <div class="card-body">
+    <div class="toast bg-success" id="myToastSuccess" style="position: absolute; top: 0; right: 0;">
+      <div class="toast-header">
+          <strong class="mr-auto"><i class="fa fa-grav"></i> Score entry result</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="toast-body">
+          <div>Your score has been saved successfully.</div>
+      </div>
+    </div>
+
+    <div class="toast bg-success" id="myToastSuccessBulk" style="position: absolute; top: 0; right: 0;">
+      <div class="toast-header">
+          <strong class="mr-auto"><i class="fa fa-grav"></i> All Score entry result</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="toast-body">
+          <div>All scores have been saved successfully.</div>
+      </div>
+    </div>
+
+    <div class="toast bg-danger" id="myToastError" style="position: absolute; top: 0; right: 0;">
+      <div class="toast-header">
+          <strong class="mr-auto"><i class="fa fa-grav"></i> Score entry result</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="toast-body">
+          <div>Your score has not been saved. Please try again.</div>
+      </div>
+    </div>
+
+    <table id="tableCampusManEntry" class="table table-bordered table-striped table-hover table-sm" style=" width: 100%;">
+      <thead>
+        <tr>
+          <th id="colRowId" data-id-field="DistrictKey">Key</th>
+          <th id="colKPIName">Campus Name</th>
+          <th id="colKPIName">Short Name</th>
+          <th id="colScoreOld" style="text-align: center;">Score</th>
+          <th id="colStatus" style="text-align: center;">Status</th>
+          <th id="colScoreH" data-id-field="Score" style="text-align: center;">New Score</th>
+          <th data-id-field="ArtifactUrl">Artifact Url</th>
+          <th id="colAction" >Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in listCamps %}
+        <tr>
+          <td data-row-id='{{ c.RowID }}' data-type="RowID" hidden>{{c.RowID}}</td>
+          <td style="width: 10%;">{{ c.CampusKey }} </td>
+          <td style="width: 25%;">{{ c.Campus }} </td>
+          <td style="width: 15%;">{{ c.CampusShort }} </td>
+          {% if c.CurrentScore|int < 0 %}
+            <td style="width: 5%; text-align: center;">None</td>
+            <td class = "text-danger" style="width: 5%; text-align: center; font-weight:bolder "><i class="fa fa-minus" aria-hidden="true" title="Score not entered before!"></i></td>
+          {% else %}
+            <td id="colCurrentScore" name="colCurrentScore" data-row-id='{{ c.RowID }}' data-type="CurrentScore" style="width: 5%; text-align: center;">{{c.CurrentScore|int}}</td>
+            <td class = "text-success" style="width: 5%; text-align: center;"><i class="fa fa-check" aria-hidden="true" title="Score entered before."></i></td> 
+          {% endif %}          
+          <td style="width: 10%; text-align: center;">
+            <input type="number" id="colScore" name="colScore" step="1"  min="0" max="4" maxlength="4" data-row-id='{{ c.RowID }}' data-type="EnteredScore" value="{{ c.Score }}" 
+                style="background-color: rgb(183, 228, 250); font-weight: bolder; text-align: center;">
+          <td style="width: 30%;">
+            <input type="input" class="form-control" id = "colArtifactUrl" name = "colArtifactUrl" minlength="30" data-row-id='{{ c.RowID }}' data-type="EnteredArtifactUrl"  
+                value="{{c.CurrentArtifactURL}}"   style="height: 30px; width: 100%; background-color: rgb(203, 234, 243)" placeholder="Google drive excel file link" 
+                required> </td>
+
+            <!-- selectedIDs = $('input[type="checkbox"][data-type="score"]').map(function () { return $(this).data("row-id") }).get(); -->
+          </td>
+          <td style="width: 5%;"> 
+            <!-- <a href="/" class="btn btn-success btn-xs" onclick="insertScore(); return false"> <b> Score Update</b> </a>-->
+            <button type="button" id="btnUpdate" value="" text class="btn btn-primary btn-sm active" onclick="OneScoreInsert({{c.RowID}},{{c.Score}})"> Update</button>           
+          </td>            
+        </tr> 
+        {% endfor %}
+      </tbody>
+    </table>
+    
+  </div>  
+  
+  <div class="modal-footer">
+    <button class="btn btn-primary active" style="height: min-content;" role="button" aria-pressed="true" id="btnSave" name="btnSave" onclick="bulkScoreInsert();" >Update All Scores</button>
+</div>
+
+<div class="modal-footer">
+  <a href="/pr_kpi" class="btn btn-primary btn-default active" style="height: min-content;" role="button" aria-pressed="true">Back</a>
+    <a href="/pr_dist_man_entry" class="btn btn-success active" style="height: min-content;" role="button" aria-pressed="true">Next</a>
+</div>
+
+</div>
+{% endif %}
+
+
+<!-- END OF PAGE   -->
+
+
+<!-- <script>   -->
+  <script>
+
+    $(document).ready(function () {
+    $('.stepper').mdbStepper();
+    }) 
+       
+    function changeDistrictButtonsBackColor(btnName) 
+    { 
+      var x = document.getElementById("secDistrict");
+      var y = x.getElementsByTagName("button");
+      var i;
+      for (i = 0; i < y.length; i++) {
+        y[i].classList.remove("bg-success");
+        y[i].classList.add("bg-light");
+      }
+      
+      var x = document.getElementById(btnName);
+      if (x.classList.contains("bg-light")) 
+      {
+        alert('111' + x.value)
+        x.classList.remove("bg-light");
+        x.classList.add("bg-success");
+      } 
+      else 
+      {
+        alert('222' + x.value)
+        x.classList.remove("bg-success");
+        x.classList.add("bg-light");
+      }          
+    }
+    
+    
+    function bulkScoreInsert()
+    {
+     
+      var ArrayIDs = [];
+      var ArrayKeys = [];
+      var ArrayScores = [];
+      var ArrayURL = [];
+
+      var myTable = document.getElementById('tableCampusManEntry');
+      for (i = 1; i < myTable.rows.length; i++) 
+      {
+        ArrayKeys.push([myTable.rows[i].cells[1].innerText]);
+      }
+      
+      $('input[type="input"][data-type="EnteredArtifactUrl"]').map(function () 
+        { 
+          ArrayURL.push([$(this).get()[0].value]);
+          return ArrayURL;
+        }
+      )
+
+      $('input[type="number"][data-type="EnteredScore"]').map(function () 
+        { 
+          ArrayScores.push([$(this).get()[0].value]);
+          ArrayIDs.push([ $(this).data("row-id")]);
+
+          return ArrayIDs, ArrayScores;
+        }
+      )
+
+      // post body -> data: myTableArray
+      var varKPIRowID = document.getElementById('txtKPIRowID').value;
+      var varKPICategoryKey = document.getElementById('txtKPICategoryKey').value;
+      var varKPIWeight = document.getElementById('txtKPIWeight').value;
+      //indvidual score
+      //var varMyScore = $('input[type="number"][data-type="EnteredScore"][data-row-id="' + DistrictRowID + '"]').get()[0].value;   
+      
+      var varDistrictRowID = document.getElementById('txtDistrictRowID').value;
+      var url = '/pr_cmp_man_entry_bulk'; 
+      var postData = "arrayIDs=" + ArrayIDs + "&arrayKeys=" + ArrayKeys + "&arrayScores=" + ArrayScores + "&arrayURLs=" + ArrayURL + "&varKPICategoryKey=" + varKPICategoryKey + "&varDistrictRowID=" + varDistrictRowID + "&varKPIRowID=" + varKPIRowID + "&varKPIWeight=" + varKPIWeight
+      $.ajax({
+              type: "POST",
+              url: url,
+              cache: false,
+              data: postData,
+              success:
+                  function (response) 
+                  {
+                    if (response && response.status && response.status == "OK")
+                    {
+                      $("#myToastSuccessBulk").toast('show');
+                    }
+                    else if (response.status === "error" && response.error)
+                    {
+                      alert('hata olustu. hata mesaji:' + response.error);  
+                      $("#myToastError").toast('show');
+                    }
+                  },
+                  error: function(x,y,z)
+                  {
+                    alert(z);                  
+                  }
+                });      
+    }
+
+
+    function OneScoreInsert(CampusRowID, Score) 
+    {
+      //var varLink = $('input[type="text"][data-type="ArtifactUrl"][data-row-id="' + DistrictRowID + '"]').get()[0].value;
+      var varArtifactUrl = $('input[type="input"][data-type="EnteredArtifactUrl"][data-row-id="' + CampusRowID + '"]').get()[0].value;
+
+      if (varArtifactUrl.length < 20) 
+      {
+        alert("Google drive link must be min 30 characters")
+        return;
+      }
+
+      var res = varArtifactUrl.includes("https://drive.google.com");
+      if (res == false) 
+      {
+        alert("Entered Artifact URL must be google drive link!")
+        return;
+      }
+
+      var varKPIRowID = document.getElementById('txtKPIRowID').value;
+      var varKPICategoryKey = document.getElementById('txtKPICategoryKey').value;
+      var varKPIWeight = document.getElementById('txtKPIWeight').value;
+
+      var varDistrictRowID = document.getElementById('txtDistrictRowID').value;
+      alert('DistrictRowID' + varDistrictRowID)
+    
+
+      //indvidual score
+      var varMyScore = $('input[type="input"][data-type="EnteredScore"][data-row-id="' + CampusRowID + '"]').get()[0].value;
+      alert('varMyScore :' + varMyScore)
+      
+      var url = '/pr_cmp_man_entry_one'; 
+      //var postData ="KPIRowID=" + KPIRowID + "&score=" + varMyScore + "&varDistrictKeyList=" + varDistrictKey + "&varDepartmentKeyList=" + varDepartmentKey;
+      var postData = "varCampusRowID=" + CampusRowID + "&KPIRowID=" + varKPIRowID + "&score=" + varMyScore + "&varKPIWeight=" + varKPIWeight + "&varDistrictRowID=" + varDistrictRowID + "&varKPICategoryKey=" + varKPICategoryKey + "&varArtifactURL=" + varArtifactUrl
+      $.ajax({
+              type: "POST",
+              url: url,
+              cache: false,
+              data: postData,
+              success:
+                  function (response) {
+                    alert('skor basarili olarak guncellendi - ' + response);
+
+                    if (response && response.status && response.status == "OK")
+                    {
+                      alert('skor basarili olarak guncellendi');
+                      $("#myToastSuccess").toast('show');
+                    }
+                    else if (response.status === "error" && response.error)
+                    {
+                      alert('hata olustu. hata mesaji:' + response.error);  
+                      $("#myToastError").toast('show');
+                    }
+                  },
+                  error: function(x,y,z){
+                    alert(z);
+
+                  }
+                });
+      
+    }            
+
+    function checkLength(el) 
+    {
+      if (el.value.length != 6) 
+      {
+        alert("Google drive link must be min 30 characters")
+      }
+    }
+
+    function SetSelectedValues(KPIRowID, KPIKey, KPIName, CategoryKey, Category, Desc, Weight, selDist)
+    {
+        document.getElementById('txtKPIRowID').value = KPIRowID;
+        document.getElementById('txtKPIKey').innerText = KPIKey;
+        document.getElementById('txtKPIName').innerText = KPIName;
+        document.getElementById('txtKPICategoryKey').value = CategoryKey;
+        document.getElementById('txtKPICategory').innerText = Category;
+        //document.getElementById('txtKPIDesc').innerText = Desc;
+        document.getElementById('txtKPIWeight').value = Weight;
+        alert('selDist' + selDist)
+        document.getElementById('varDistrictRowID').value = selDist;
+        
+        // buradan sayfayi yeniden cagiracagiz
+        document.hiddenForm.submit();  
+    }
+
+    function ajaxseysi(varDistrictRowID, varDistrictKey) 
+    {
+
+      var url = '/pr_cmp_man_entry'; 
+      var postData ="varDistrictRowID=" + varDistrictRowID + "&varDistrictKey=" + varDistrictKey;
+      $.ajax({
+              type: "POST",
+              url: url,
+              cache: false,
+              data: postData,
+              success:
+                  function (response) {
+                    alert('skor basarili olarak guncellendi - ' + response);
+
+                    if (response && response.status && response.status == "OK")
+                    {
+                      alert('skor basarili olarak guncellendi');
+                      $("#myToastSuccess").toast('show');
+                    }
+                    else if (response.status === "error" && response.error)
+                    {
+                      alert('hata olustu. hata mesaji:' + response.error);  
+                      $("#myToastError").toast('show');
+                    }
+                  },
+                  error: function(x,y,z){
+                    alert(z);
+
+                  }
+                });
+    }
+
+    function GetCampusesOfSelectedDistrict(varDistrictRowID, varDistrictKey) 
+    {
+
+        // The rest of this code assumes you are not using a library.
+        // It can be made less wordy if you use one.
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/pr_cmp_man_entry'; ;
+
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'varDistrictRowID';
+        hiddenField.value = varDistrictRowID;
+        form.appendChild(hiddenField);
+
+        const hiddenField2 = document.createElement('input');
+        hiddenField2.type = 'hidden';
+        hiddenField2.name = 'varDistrictKey';
+        hiddenField2.value = varDistrictKey;
+        form.appendChild(hiddenField2);
+
+        const hiddenField3 = document.createElement('input');
+        hiddenField3.type = 'hidden';
+        hiddenField3.name = 'txtKPIRowID';
+        hiddenField3.value = document.getElementById('txtKPIRowID').value;
+        form.appendChild(hiddenField3);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+
+{% endblock %}
+          

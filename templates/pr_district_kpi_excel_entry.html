@@ -1,0 +1,159 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+<section class="section-preview text-center">
+  <button type="menu" class="btn btn-default waves-effect waves-light">PROCESS STATUS</button>
+  <button class="btn btn-success waves-effect waves-light" disabled> STARTED</button>
+  <button class="btn btn-success waves-effect waves-light" disabled> CATEGORY</button>
+  <button class="btn btn-success waves-effect waves-light" disabled> KPI</button>
+  <button class="btn btn-success waves-effect waves-light" disabled> CAMPUS SCORE ENTRY</button>
+  <button class="btn btn-primary waves-effect waves-light" disabled> 
+      <span class="spinner-grow spinner-grow-sm"></span> DISTRICT SCORE ENTRY <span class="spinner-grow spinner-grow-sm"></span></button>
+</section>
+<hr>
+
+{% if mess is defined and mess is not none %}
+  <div class="row">    
+    <div class="col-6">    
+      <div class="card border-3 shadow mb-2 d-block guide-preview align-items-center p-3 " style="background-color: gainsboro;">
+        <div class="card card-success">
+          <div class="card-header">
+            <h3 class="card-title">Message Board</h3>
+          </div>
+          <div class="card-body">
+            <h4 class="card-title">{{ mess }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<div class="row">    
+  <div class="col-4">    
+    <div class="card border-3 shadow mb-2 d-block guide-preview align-items-center p-3 " style="background-color: gainsboro;">
+      <div class="card card-primary">
+        <div class="card-header">
+          <h3 class="card-title">Step 1) Please click to download excel template</h3>
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+          <div class="card-body ">
+            <div class="image text-center">
+              <a href="/process_dist_excel">
+              <img src="{{ url_for('static', filename='dist/img/excel_download2.jpg') }}" class="img-circle elevation-5" style="width: 100px; height: 90px;" alt="Excel Image"> </a>
+            </div>
+                  
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-3">    
+    <div class="card border-3 shadow mb-2 d-block guide-preview align-items-center p-3 " style="background-color: gainsboro;">
+      <div class="card card-primary">
+        <div class="card-header">
+          <h3 class="card-title">Step 2) Please select and upload excel file</h3>
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+          <div class="card-body">
+              <div class="input-group">
+                <form method = "post" enctype = "multipart/form-data">
+                  <input type = "file" name = "file" dirname="{{ dirName }}" onclick="setFileName()">
+                  <input type = "submit" value = "Upload" >
+                </form>
+              </div>
+              
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer" style="text-align: justify;">
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-3">    
+    <div class="card border-3 shadow mb-2 d-block guide-preview align-items-center p-3 " style="background-color: gainsboro;">
+      <div class="card card-primary">
+        <div class="card-header">
+          <h3 class="card-title">Step 3) You can save all scores after data control</h3>
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+          <div class="card-body ">
+              <div class="input-group align-items-center">
+                <form action="/process_excel_to_db" method="POST">
+                  <input type="hidden" id = "file2" name = "file2" value="{{ fileName }}">
+                  <button name="btnSaveScores" type="submit" class="btn btn-primary">Save scores</button>
+                </form>
+              </div>
+              
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer" style="text-align: justify;">
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="card table-responsive">
+    <table id="tableDistKPIManuelEntry" class="table table-bordered table-striped table-hover display wrap dataframe data table-sm" style="width: 800px;">
+      <thead>
+        <tr>
+          {% for col in column_names %}
+            <th>{{col}}</th>
+          {% endfor %}
+      </tr>
+      </thead>
+    <tbody>
+      {% for row in row_data %}
+      <tr>
+          {% for col in row %}
+          <td>{{ col }}</td>
+          {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+      <tfoot>
+        <tr>
+          {% for col in column_names %}
+            <th>{{col}}</th>
+          {% endfor %}
+      </tr>
+      </tfoot>
+    </table>
+
+
+    <div class="modal-footer">
+      {% if openType != 0 %}
+        <a href="/pr_campus_excel_entry" class="btn btn-primary btn-default active" style="height: min-content;" role="button" aria-pressed="true">Back</a>
+        <a href="/home" class="btn btn-success btn-default active" style="height: min-content;" role="button" aria-pressed="true">Complete</a>
+        {% endif %}
+    </div>
+</div>
+
+
+<script>
+
+$(document).ready(function() {
+    $('#tableDistKPIManuelEntry').DataTable( {
+        "scrollY": 500,
+        "sScrollX": '100%'
+    } );
+} );
+
+function setFileName() 
+  {
+    document.getElementById("file2").innerText = document.getElementById("file").value;
+    document.getElementById("file2").value = document.getElementById("file").value;
+
+  }
+
+</script>
+
+{% endblock %}

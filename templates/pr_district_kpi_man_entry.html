@@ -1,0 +1,286 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+<nav aria-label="breadcrumb" >
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page" style="font-size: large; color: orangered; font-weight: bolder;">District Level KPI Score Entry</li>
+  </ol>
+</nav>
+
+<div class="row">    
+  <div class="col-8">    
+    <div class="card border-3 shadow mb-2 d-block guide-preview align-items-center p-3 " style="background-color: gainsboro;">
+          {% for d in dists %}
+          
+            {% if d.OrderNo == 1 %}
+              <button type="button" id="btnDist1" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist1')"> 
+            {% elif d.OrderNo == 2 %}
+              <button type="button" id="btnDist2" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist2')"> 
+            {% elif d.OrderNo == 3 %}
+              <button type="button" id="btnDist3" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist3')"> 
+            {% elif d.OrderNo == 4 %}
+              <button type="button" id="btnDist4" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist4')"> 
+            {% elif d.OrderNo == 5 %}
+              <button type="button" id="btnDist5" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist5')"> 
+            {% elif d.OrderNo == 6 %}
+              <button type="button" id="btnDist6" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist6')"> 
+            {% elif d.OrderNo == 7 %}
+              <button type="button" id="btnDist7" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist7')"> 
+            {% elif d.OrderNo == 8 %}
+              <button type="button" id="btnDist8" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist8')"> 
+            {% else %}
+              <button type="button" id="btnDist9" value="{{ d.RowID }}"class="btn btn-info" onclick="setSelectedDist('btnDist9')"> 
+            {% endif %}            
+            {{ d.DistrictShort }} </button>
+          {% endfor %} 
+    </div>
+    <div class="card border-3 shadow mb-2 d-block guide-preview p-3 align-items-center" style="background-color: whitesmoke;">
+            {% for d in depts %}
+            
+              {% if d.OrderNo == 1 %}
+                <button type="button" id="btn1" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn1')"> 
+              {% elif d.OrderNo == 2 %}
+                <button type="button" id="btn2" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn2')"> 
+              {% elif d.OrderNo == 3 %}
+                <button type="button" id="btn3" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn3')"> 
+              {% elif d.OrderNo == 4 %}
+                <button type="button" id="btn4" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn4')"> 
+              {% elif d.OrderNo == 5 %}
+                <button type="button" id="btn5" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn5')"> 
+              {% elif d.OrderNo == 6 %}
+                <button type="button" id="btn6" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn6')"> 
+              {% elif d.OrderNo == 7 %}
+                <button type="button" id="btn7" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn7')"> 
+              {% elif d.OrderNo == 8 %}
+                <button type="button" id="btn8" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn8')"> 
+              {% else %}
+                <button type="button" id="btn9" value="{{ d.RowID }}"class="btn btn-warning" onclick="setSelectedDept('btn9')"> 
+              {% endif %}            
+              {{ d.DepartmentShort }} </button>
+            {% endfor %} 
+    </div>
+  </div>
+  <div class="col-2">
+    <div class="card border-3 shadow mb-2 d-block guide-preview p-3" style="background-color: gainsboro; text-align: center;">
+      <input type="hidden" value="" id="selectedDistId">
+      <label id="selectedDistName" style="font-size: large;  color: darkslateblue; " ></label>
+    </div>
+    <div class="card border-3 shadow mb-2 d-block guide-preview p-3" style="background-color: whitesmoke; text-align: center;">
+      <input type="hidden" value="" id="selectedDeptId">
+      <label id="selectedDeptName" style="font-size: large;  color: darkslateblue; "></label>
+    </div>
+  </div>    
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <table id="tableDistKPIManuelEntry" class="table table-bordered table-striped table-hover" style="width: 100%;">
+      <thead>
+      <tr>
+        <th id="colRowId"   data-id-field="KPIRowID"  style="width: 8%;">Row ID</th>
+        <th id="colDeptId"  style="width: 7%; display:none;">Dep. Id</th>
+        <th id="colDeptName"  style="width: 12%;">Department</th>
+        <th id="colCatId"   style="width: 6%; display:none;">Cat. Id</th>
+        <th id="colCatName" style="width: 13%;">Category</th>
+        <th id="colKPIKey"  style="width: 10%;">KPI Key</th>
+        <th id="colKPIName" style="width: 20%;">KPI Name</th>
+        <th id="colOrder"   style="width: 30px;">Order</th>
+        <th id="colWeight"  style="width: 20px;">Weight</th>
+        <th id="colIsAccept"  style="width: 25px;">Is Accp.</th>
+        <th id="colAdjWeight" style="width: 20px;">Adj. Weight</th>
+        <th id="colScore"   style="width: 30px;">Score</th>
+        <th id="colScore2"   style="width: 10px;">New Score</th>
+        <th id="colAction"  style="width: 7%;">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for c in kpi_list %}
+      <tr>
+          <td>{{ c.KPIRowID }} </td>
+          <td style="display:none;">{{ c.DepartmentRowId }} </td>
+          <td>{{ c.Department }} </td>
+          <td style="display:none;">{{ c.CategoryRowId }} </td>
+          <td>{{ c.Category }} </td>
+          <td>{{ c.KPIKey }} </td>
+          <td>{{ c.KPI_Name }} </td>
+          <td>{{ c.DisplayOrder }} </td>
+          <td>{{ c.Weight }} </td>
+          <td>{{ c.Is_KPI_Applicable }} </td>
+          <td>{{ c.Adjusted_Weight }} </td>
+          <td>{{ c.Score }} </td>
+          <td><input type="number" id="colScore2" name="colScore2" step=".1"  min="0" max="4" style="width: 50px;" maxlength="4" value="{{ c.Score }}"></td>
+          <td>
+            <a href="/dist_kpi_score_entry/{{ c.KPIRowID }}" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#frmModalKPIScoreEdit{{ c.KPIRowID }}"> <b> Score Entry </b></a>
+          </td>
+      </tr>
+        <!-- Modal Edit KPI-->
+        <div id="frmModalKPIScoreEdit{{ c.KPIRowID }}" class="modal fade" role = "dialog">
+            <div class="modal-dialog">
+            <div class="modal-content">
+        <div class="modal-header"><h4 class="modal-title">KPI Score Entry</h4></div>
+            <div class="modal-body">
+            <form action="{{ url_for('dist_kpi_score_entry') }}" method="POST">
+            <div class="form-group">
+                <label>KPI Key</label>
+                <input type="hidden"  name="IsKPIApplicable" value="{{ c.Is_KPI_Applicable }}">
+                <input type="hidden"  name="DistrictRowID" value="{{ c.DistrictRowID }}">
+                <input type="hidden"  name="KPIRowID" value="{{ c.KPIRowID }}">
+                <input type="text" class="form-control" name = "KPIKey" value = "{{ c.KPIKey }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input type="hidden"  name="DepartmentRowId" value="{{ c.DepartmentRowId }}">
+                <input type="text" class="form-control" name = "Department" value = "{{ c.Department }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <input type="hidden"  name="CategoryRowId" value="{{ c.CategoryRowId }}">
+              <input type="text" class="form-control" name = "Category" value = "{{ c.Category }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>KPI Name</label>
+              <input type="text" class="form-control" name = "KPI_Name" value = "{{ c.KPI_Name }}" readonly>
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bolder;">SCORE</label>
+              <input type="number" name = "Score" style="background-color:lightskyblue;" step="1" max="10" min = "0" class = "form-control" name = "Score" value="{{ c.Score }}">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Update Score</button>
+            </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Form</button>
+            </div>
+        </div>
+        </div>
+        </div>       
+      {% endfor %}
+    </tbody>
+      <tfoot>
+      <tr>
+        <th data-id-field="RowID"  style="width: 8%; visibility: hidden;">Row ID</th>
+        <th>Department</th>
+        <th>Category</th>
+        <th>KPI Key</th>
+        <th>KPI Name</th>
+        <th>Order</th>
+        <th>Weight</th>
+        <th>Is Accp.</th>
+        <th>Adj. Weight</th>
+        <th>Score</th>
+        <th>New Score</th>
+        <th>Action</th>
+      </tr>
+      </tfoot>
+    </table>
+   </div>  
+
+    <div class="modal-footer">
+      <a href="/home" class="btn btn-primary btn-lg active" style="height: min-content;" role="button" aria-pressed="true">Save and Complete</a>
+    </div>
+</div>
+
+
+<script>
+
+  function setSelectedDept() 
+  {
+    var myDataTable = $('#tableDistKPIManuelEntry').DataTable();
+
+    $('#btnFilter').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("selectedDeptId").innerText, true, false, true).draw();
+    });
+
+    $('#btn1').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn1").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn1").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn1").innerText;
+    });
+
+    $('#btn2').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn2").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn2").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn2").innerText;
+    });
+
+    $('#btn3').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn3").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn3").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn3").innerText;
+    });
+
+    $('#btn4').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn4").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn4").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn4").innerText;
+    });
+
+    $('#btn5').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn5").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn5").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn5").innerText;
+    });
+
+    $('#btn6').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn6").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn6").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn6").innerText;
+    });
+
+    $('#btn7').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn7").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn7").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn7").innerText;
+    });
+
+    $('#btn8').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn8").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn8").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn8").innerText;
+    });
+
+    $('#btn9').on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById("btn9").value, true, false, true).draw();
+      document.getElementById("selectedDeptId").value = document.getElementById("btn9").value;
+      document.getElementById("selectedDeptName").innerText = document.getElementById("btn9").innerText;
+    });
+
+  }
+
+
+  function setSelectedDist(btnName) 
+  {
+    document.getElementById("selectedDistId").value = document.getElementById(btnName).value;
+    document.getElementById("selectedDistName").innerText = document.getElementById(btnName).innerText;
+
+  }
+
+  function setSelectedDept2(btnName) 
+  {
+    var str1 = '#';
+    var res = str1.concat(btnName);
+
+    document.getElementById("selectedDeptId").value = document.getElementById(btnName).value;
+    document.getElementById("selectedDeptName").innerText = document.getElementById(btnName).innerText;
+
+    $(res).on('click', function () 
+    {
+      myDataTable.columns(1).search(document.getElementById(document.getElementById("selectedDeptId").value).value, true, false, true).draw();
+    });
+  }
+
+</script>
+
+{% endblock %}

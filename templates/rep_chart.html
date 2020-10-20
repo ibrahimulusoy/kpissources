@@ -1,0 +1,486 @@
+{% extends 'master_page.html' %}
+{% block body %}
+    <h5><strong>Scores Cards View (Harmony Head Office and District Overview)</strong> 
+        <small style="color: teal;">   You could choose term and district</small> </h5>
+<div class="row">
+  <div class="col-3">
+
+
+  </div>
+
+  <div class="col-8">
+
+    <div class="row">
+        <div class="card border-0 shadow d-block guide-preview" style="background-color: darkgrey;">
+            <div class="p-3 d-flex align-items-center">
+                <section class="section-preview text-center" name="secDistrict" id="secDistrict">
+                  <button 
+                    {% if selDist == 00 %}                                          
+                       class="btn bg-success waves-effect waves-light" 
+                    {% else %}
+                      class="btn bg-light waves-effect waves-light" 
+                    {% endif %}
+                        onclick="changeLabelDistrict('btnDistHPS')" id="btnDistHPS" name="btnDistHPS" value="0">Harmony P.S.</button>
+                  {% for s in listDists %}
+                    <button 
+                        {% if selDist is defined %}
+                          {% if selDist == s.DistrictKey %}                        
+                            class="btn bg-success waves-effect waves-dark" 
+                          {% else %}
+                            class="btn bg-light waves-effect waves-dark" 
+                          {% endif %}
+                        {% else %}
+                          class="btn bg-light waves-effect waves-dark" 
+                        {% endif %}
+                            onclick="changeLabelDistrict('btnDist{{ s.DistrictKey}}')"
+                        id="btnDist{{ s.DistrictKey}}" name="btnDist{{ s.DistrictKey}}"  value="{{ s.DistrictKey}}"> {{ s.DistrictShort}}</button>
+                  {% endfor %}
+                </section>
+            </div>
+        </div>    
+    </div>  
+
+    <div class="row">
+      <div class="card border-0 d-block guide-preview " style="background-color: darkgrey;">
+        <div class="p-2 d-flex align-items-center ml-3 mr-3 ">
+            <section class="section-preview text-center" id="secSemestre" name="secSemestre">
+                {% for s in listTerms %}
+                    <button 
+                      {% if selTerm is defined %}
+                        {% if selTerm == s.TermKey %}                        
+                          class="btn bg-success waves-effect waves-dark" 
+                        {% else %}
+                          class="btn bg-light waves-effect waves-dark" 
+                        {% endif %}
+                      {% else %}
+                        class="btn bg-light waves-effect waves-dark" 
+                      {% endif %}
+                      onclick="changeLabelSemestre('btnTerm{{ s.TermKey}}')" tag="btnSemestre"
+                        id="btnTerm{{ s.TermKey}}" name="btnTerm{{ s.TermKey}}" value="{{ s.TermKey}}"> {{ s.Term}}</button>
+                {% endfor %}
+            </section>
+        </div>
+      </div>
+      <div class="col-2">          
+              <form action="/rep_do2" method="POST">
+                <input type="hidden" id = "varDistrictKey" name = "varDistrictKey" 
+                      {% if prevVar is defined %}
+                        value="{{prevVar.DictrictKey}}"
+                      {% endif %}
+                >
+                <input type="hidden" id = "varDistrictName" name = "varDistrictName" 
+                      {% if prevVar is defined %}
+                        value="{{prevVar.DictrictName}}"
+                      {% endif %}
+                >
+
+                <input type="hidden" id = "varTermKey" name = "varTermKey"
+                      {% if prevVar is defined %}
+                        value="{{prevVar.TermKey}}"
+                      {% endif %}
+                >
+                <input type="hidden" id = "varTermName" name = "varTermName"
+                      {% if prevVar is defined %}
+                        value="{{prevVar.TermName}}"
+                      {% endif %}
+                >
+                <button name="btnSaveScores" type="submit" class="btn btn-link btn-dark" 
+                        style="font-weight: bolder; color: whitesmoke; height:50px;" onclick="return clickGetScore()">GET SCORES</button>
+              </form>
+      </div>  
+
+      <div class="col-4">
+        <div class="card border-0 shadow d-block guide-preview" style="background-color: darkgrey;">
+          <div class="p-2 d-flex align-items-center ml-2">
+            <section class="section-preview float-right">
+                <button class="btn bg-success waves-effect waves-dark">3.5 - 4.0</button>
+                <button class="btn bg-primary waves-effect waves-dark">3.0 - 3.4</button>
+                <button class="btn bg-warning waves-effect waves-dark">2.5 - 2.9</button>
+                <button class="btn bg-danger waves-effect waves-dark">0.0 - 2.4</button>
+            </section>
+          </div>
+        </div> 
+      </div>
+    </div>    
+  </div>  
+</div>
+<hr>
+
+  {% if listScores is defined %}
+  
+  <div class="row">
+
+    <div class="col-10">          
+      <div class="card p-2 border-0 d-block guide-preview">
+      <div class="card-group">
+          {% for s in listScores %}
+          <div class="col-lg-3 ">
+            <!-- small card -->
+              {% if s.Score <= 2.4: %}
+                <div class="small-box bg-danger">
+              {% elif s.Score >= 2.5 and s.Score < 3: %}
+                <div class="small-box bg-warning">          
+              {% elif s.Score >= 3 and s.Score < 3.5: %}
+                <div class="small-box bg-primary">          
+              {% elif s.Score >= 3.5: %}
+                <div class="small-box bg-success">
+              {% endif %}
+              <div class="inner">
+                <h1><strong>{{ s.Score }}</strong></h1>
+                <p>{{ s.Department }}</p>
+              </div>
+              <div class="icon">
+                  {% if s.Score <= 2.4: %}
+                    <i class="fas fa-angry"></i>                
+                  {% elif s.Score >= 2.5 and s.Score < 3: %}
+                    <i class="far fa-meh"></i>
+                  {% elif s.Score >= 3 and s.Score < 3.5: %}
+                    <i class="far fa-smile"></i>
+                  {% elif s.Score >= 3.5: %}
+                    <i class="far fa-smile-wink"></i>
+                  {% endif %}
+              </div>
+              <a href="/" class="small-box-footer" onclick="getCategoryScores('{{ s.TermKey }}','{{ s.DepartmentKey }}'); return false">View Category Base Scores 
+                                <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+            {% if s.Department_OrderNo >= 4 : %}
+              <br>
+            {% endif %}
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+  
+  </div>
+
+<hr>
+
+  {% endif %}
+
+
+  {% if listCatScores is defined %}
+    <div class="row">
+      <div class="col-10" >          
+        <div class="card border-0 d-block guide-preview">
+          <div class="p-1 d-flex align-items-center"  style="background-color: lightskyblue" >
+            <div class="content">
+              <h5 class="mb-2 mt-2 ml-2 mr-2"><strong> Category scores of 
+                <label id="labelSelectedDepartment" name="labelSelectedDepartment" style="color: teal;">  
+                    {% if prevVar is defined %}
+                      {{prevVar.DepartmentName}}
+                    {% endif %}                                                              
+                </label></strong> 
+                  <input type="hidden" id = "varDepartmentName" name = "varDepartmentName" 
+                    {% if prevVar is defined %}
+                      value="{{prevVar.DepartmentName}}"
+                    {% endif %}
+                    >
+              </h5>
+            </div>
+          </div>  
+        </div>  
+      </div>
+    </div>
+
+      <div class="row">
+
+        <div class="col-10">          
+          <div class="card p-2 border-0 d-block guide-preview">
+          <div class="card-group">
+              {% for s in listCatScores %}
+              <div class="col-lg-3 ">
+                <!-- small card -->
+                  {% if s.Score <= 2.4: %}
+                    <div class="small-box bg-danger">
+                  {% elif s.Score >= 2.5 and s.Score < 3: %}
+                    <div class="small-box bg-warning">          
+                  {% elif s.Score >= 3 and s.Score < 3.5: %}
+                    <div class="small-box bg-primary">          
+                  {% elif s.Score >= 3.5: %}
+                    <div class="small-box bg-success">
+                  {% endif %}
+                  <div class="inner">
+                    <h3><strong>{{ s.Score }}</strong></h3>
+                    <p>{{ s.Category }}</p>
+                  </div>
+                  <div class="icon">
+                      {% if s.Score <= 2.4: %}
+                        <i class="fas fa-angry"></i>                
+                      {% elif s.Score >= 2.5 and s.Score < 3: %}
+                        <i class="far fa-meh"></i>
+                      {% elif s.Score >= 3 and s.Score < 3.5: %}
+                        <i class="far fa-smile"></i>
+                      {% elif s.Score >= 3.5: %}
+                        <i class="far fa-smile-wink"></i>
+                      {% endif %}
+                  </div>
+                  <a href="/" class="small-box-footer" onclick="getCategoryKPIScores('{{ s.TermKey }}','{{ s.DepartmentKey }}','{{ s.CategoryKey }}'); 
+                                                                return false">View KPI Scores
+                    <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+                {% if s.Category_OrderNo >= 4 : %}
+                  <br>
+                {% endif %}
+
+              {% endfor %}
+          </div>
+        </div>
+      </div>
+      
+      </div>
+    {% endif %}
+
+<hr>
+    {% if listKPIScores is defined %}
+    <div class="row">
+      <div class="col-10" >          
+        <div class="card border-0 d-block guide-preview">
+          <div class="p-1 d-flex align-items-center"  style="background-color: lightskyblue" >
+            <div class="content">
+              <h5 class="mb-2 mt-2 ml-2 mr-2"><strong> KPI scores of 
+                <label id="labelSelectedCategory" name="labelSelectedCategory" style="color: teal;">  
+                    {% if prevVar is defined %}
+                      {{prevVar.CategoryName}}
+                    {% endif %}                                                              
+                </label></strong> 
+                  <input type="hidden" id = "varCategoryName" name = "varCategoryName" 
+                    {% if prevVar is defined %}
+                      value="{{prevVar.CategoryName}}"
+                    {% endif %}
+                    >
+              </h5>
+            </div>
+          </div>  
+        </div>  
+      </div>
+    </div>
+
+      <div class="row">
+
+        <div class="col-10">          
+          <div class="card p-2 border-0 d-block guide-preview">
+          <div class="card-group">
+              {% for s in listKPIScores %}
+              <div class="col-lg-3 ">
+                <!-- small card -->
+                  {% if s.Score <= 2.4: %}
+                    <div class="small-box bg-danger">
+                  {% elif s.Score >= 2.5 and s.Score < 3: %}
+                    <div class="small-box bg-warning">          
+                  {% elif s.Score >= 3 and s.Score < 3.5: %}
+                    <div class="small-box bg-primary">          
+                  {% elif s.Score >= 3.5: %}
+                    <div class="small-box bg-success">
+                  {% endif %}
+                  <div class="inner">
+                    <h3><strong>{{ s.Score }}</strong></h3>
+                    <p>{{ s.KPI_Name }}</p>
+                  </div>
+                  <div class="icon">
+                      {% if s.Score <= 2.4: %}
+                        <i class="fas fa-angry"></i>                
+                      {% elif s.Score >= 2.5 and s.Score < 3: %}
+                        <i class="far fa-meh"></i>
+                      {% elif s.Score >= 3 and s.Score < 3.5: %}
+                        <i class="far fa-smile"></i>
+                      {% elif s.Score >= 3.5: %}
+                        <i class="far fa-smile-wink"></i>
+                      {% endif %}
+                  </div>
+                  <a data-toggle="tooltip" class="small-box-footer" title="{{ s.Description }}">KPI Description<i class="fas fa-arrow-circle-right"></i></a>                    
+                </div>
+              </div>
+                {% if s.KPI_OrderNo >= 4 : %}
+                  <br>
+                {% endif %}
+
+              {% endfor %}
+          </div>
+        </div>
+      </div>
+      
+      </div>
+    {% endif %}
+
+    <div id="frmModalKPIList" class="modal fade" role = "dialog">
+      <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h4 class="modal-title">Category base KPI scores</h4></div>
+         <div class="modal-body">
+
+          <table id="tableKPIList" class="table table-bordered table-striped table-hover table-sm">
+            <thead>
+            <tr>
+              <th style="width: 8%;">Key</th>
+              <th style="width: 20%;">Category</th>
+              <th style="width: 20%;">Score</th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for c in listCatScores %}
+            <tr>
+                <td>{{ c.CategoryKey }} </td>
+                <td>{{ c.Category }} </td>
+                <td>{{ c.Score }} </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Form</button>
+        </div>
+      </div>
+    </div>
+  </div>       
+
+
+  <!-- END OF PAGE   -->
+
+
+<!-- <script>   -->
+<script>
+        function changeLabelDistrict(btnName) 
+        { 
+          document.getElementById('varDistrictKey').value = document.getElementById(btnName).value;
+          document.getElementById('varDistrictName').value = document.getElementById(btnName).innerText;
+          //document.getElementById('labelSelectedDistrict').innerHTML = document.getElementById(btnName).innerText; 
+
+          changeDistrictButtonsBackColor(btnName);
+        }
+
+        function changeDistrictButtonsBackColor(btnName) 
+        { 
+          var x = document.getElementById("secDistrict");
+          var y = x.getElementsByTagName("button");
+          var i;
+          for (i = 0; i < y.length; i++) {
+            y[i].classList.remove("bg-success");
+            y[i].classList.add("bg-light");
+          }
+
+          var x = document.getElementById(btnName);
+          if (x.classList.contains("bg-light")) 
+          {
+            x.classList.remove("bg-light");
+            x.classList.add("bg-success");
+          } 
+          else 
+          {
+            x.classList.remove("bg-success");
+            x.classList.add("bg-light");
+          }          
+        }
+
+
+        function changeYearButtonsBackColor(btnName) 
+        { 
+          var x = document.getElementById("secYears");
+          var y = x.getElementsByTagName("button");
+          var i;
+          for (i = 0; i < y.length; i++) {
+            y[i].classList.remove("bg-success");
+            y[i].classList.add("bg-light");
+          }
+
+          var x = document.getElementById(btnName);
+          if (x.classList.contains("bg-light")) 
+          {
+            x.classList.remove("bg-light");
+            x.classList.add("bg-success");
+          } 
+          else 
+          {
+            x.classList.remove("bg-success");
+            x.classList.add("bg-light");
+          }          
+        }
+
+        function changeLabelSemestre(btnName) 
+        { 
+          document.getElementById('varTermKey').value = document.getElementById(btnName).value;
+          document.getElementById('varTermName').value = document.getElementById(btnName).innerText;
+          // document.getElementById('labelSelectedSemestre').innerHTML = document.getElementById(btnName).innerText;
+
+          changeSemestreButtonsBackColor(btnName);
+        }
+
+
+        function changeSemestreButtonsBackColor(btnName) 
+        { 
+          var x = document.getElementById("secSemestre");
+          var y = x.getElementsByTagName("button");
+          var i;
+          for (i = 0; i < y.length; i++) {
+            y[i].classList.remove("bg-success");
+            y[i].classList.add("bg-light");
+          }
+
+          var x = document.getElementById(btnName);
+          if (x.classList.contains("bg-light")) 
+          {
+            x.classList.remove("bg-light");
+            x.classList.add("bg-success");
+          } 
+          else 
+          {
+            x.classList.remove("bg-success");
+            x.classList.add("bg-light");
+          }          
+        }
+        
+
+
+        function go_new_report() {alert("/rep_do2/999"); }
+
+        function clickGetScore() 
+        {
+          var varDistrictKey = document.getElementById('varDistrictKey').value;
+          var varTermKey = document.getElementById('varTermKey').value;
+          if (varDistrictKey == null || varDistrictKey == '') {alert("PLEASE SELECT DISTRICT" ); return false; }
+          else if (varTermKey == null || varTermKey == '') {alert("PLEASE SELECT SEMESTRE" ); return false; }
+        }
+
+        function getCategoryScores(TermKey, DepartmentKey) 
+        {
+          var varDistrictKey = document.getElementById('varDistrictKey').value;
+          window.open('/rep_cat/' + TermKey + '/' + varDistrictKey + '/' + DepartmentKey, "_self")
+        }
+
+        function getCategoryKPIScores(TermKey, DepartmentKey, CategoryKey) 
+        {
+          var varDistrictKey = document.getElementById('varDistrictKey').value;
+          window.open('/rep_cat_kpi/' + TermKey + '/' + varDistrictKey + '/' + DepartmentKey + '/' + CategoryKey, "_self")
+        }
+
+        function getKPIScores(TermKey, DepartmentKey, CategoryKey) 
+        {
+          var varDistrictKey = document.getElementById('varDistrictKey').value;
+          var varDistrictKey = document.getElementById('varDistrictKey').value;
+          window.open('/rep_kpi2/' + TermKey + '/' + varDistrictKey + '/' + DepartmentKey + '/' + CategoryKey, "_blank")
+        }
+
+        $("button").click(function(e) {
+        e.preventDefault();
+        $.ajax({
+        type: "POST",
+        url: "/rep_do1/",
+        data: { 
+            id: $(this).val(), // < note use of 'this' here
+            access_token: $("#btnYear2018_2019").val() 
+        },
+        success: function(result) {
+            alert('ok');
+        },
+        error: function(result) {
+            alert('error');
+        }
+    });
+});
+
+</script>      
+
+{% endblock %}

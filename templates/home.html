@@ -1,0 +1,122 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+    <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <!-- HEADER -->
+          {% for p in gnrlParams %}
+            <div class="row">
+              <div class="info-box bg-info">
+                <span class="info-box-icon"><i class="fa fa-globe-americas"></i></span>                
+                <div class="info-box-content">
+                  <span class="info-box-text">Current Term - {{ c.TermKey }} </span>
+                  <span id="datetime" class="info-box-text" style="text-align: center;"><strong> {{ p.Term }}</strong></span>
+                  </span>
+                </div>
+            </div>
+
+            <div class="info-box bg-primary">
+                <span class="info-box-icon"><i class="fas fa-toggle-on"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Process is  <span 
+                    {% if p.process_status == "A" %}
+                      class="badge badge-success" 
+                    {% else %}
+                      class="badge badge-danger" 
+                    {% endif %}
+                    style="font-weight: bolder; font-size:medium;">{{ p.status_text }}</span></span> <br>
+                  <div class="progress" style="height:10px">
+                    <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated " style="width: {{ p.complete_percent }}%; height: 10px;"></div>
+                  </div>
+                  <span class="progress-description"> <span class="badge badge-light" style="font-weight: bolder;">{{ p.complete_percent }}%  </span>  complete </span>
+                </div>
+              </div>
+
+              <div class="info-box bg-danger">
+                  <span class="info-box-icon"><i class="fas fa-graduation-cap"></i></span>
+                  <div class="info-box-content " >
+                    <span class="info-box-text">Number of Student </span>
+                    <span class="badge badge-button" style="font-size: large; ">{{ p.number_of_student }} </span>
+                    <div class="progress">
+                      <div class="progress-bar" style="width: {{ p.student_attendance }}%"></div>
+                    </div>
+                    <span class="progress-description"> <span class="badge badge-light" style="font-size: large;">{{ p.student_attendance }}% </span> attendance on yesterday </span>
+                  </div>
+              </div>
+
+              <div class="info-box bg-warning">
+                  <span class="info-box-icon"><i class="fa fa-chalkboard-teacher"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Number of Teachers </span>
+                    <span class="info-box-number" style="font-size: large;">{{ p.number_of_teacher }} </span>
+                    <div class="progress">
+                      <div class="progress-bar" style="width: {{ p.teacher_attendance }}%"></div>
+                    </div>
+                    <span class="progress-description"> <span class="badge badge-light" style="font-size: large;">{{ p.teacher_attendance }}%  </span> attendance on yesterday </span>
+                  </div>
+              </div>
+  
+            </div>
+          {% endfor %}
+          <!-- /.row -->
+  
+        </div><!--/. container-fluid -->
+      </section>
+      <br>
+  
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-md-12">
+            <div class="card card-primary card-outline" >
+              <div class="card-header" style="text-align: justify;" >
+                <h3 class="card-title" style="font-style: oblique; ">HPS KPI Metrics Portal Inbox and Task Assigment</h3>
+  
+                <!-- /.card-tools -->
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableInbox" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">Assigned To</th>
+                            <th style="width: 13%">Department</th>
+                            <th style="width: 23%;">Task Name</th>
+                            <th style="width: 30%;">Task Subject</th>
+                            <th style="width: 15%;">When</th>
+                            <th style="width: 6%;">Action</th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in myBox %}
+                     <tr>
+                      <td>{{ m.full_name }}</td>
+                      <td>{{ m.Department }}</td>
+                      <td><a href="{{ m.task_url }}">{{ m.task_name }}</a> </td>
+                      <td>{{ m.description }}</td>
+                      <td>{{ m.assign_date_time }}</td>
+                      <td><a href="/home_archive_task/{{ m.row_id }}" class="btn btn-success btn-xs" onclick="return confirm('Are you sure to move to complete this task?')">Complete</a> </td>           
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </section>
+      <!-- /.content -->
+      
+
+{% endblock %}

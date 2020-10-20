@@ -1,0 +1,177 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+    <div class="col-10">
+        <div class="card border-0 d-block guide-preview">
+            <div class="p-2 ml-3 d-flex align-items-center">
+                    <form action="/rep_low" method="POST">
+                      <div class="row">
+                          <div class="form-group">
+                            <label>Semestre</label>
+                            <select class="form-control" id="cmbTerm" name="cmbTerm" style="width: min-content;">
+                                {% for l in listTerms %}
+                                  {% if prevVar is defined and l.TermKey == prevVar.TermKey %}
+                                    <option value="{{ l.TermKey}}" selected>{{ l.Term }}</option>
+                                  {% else %}
+                                    <option value="{{ l.TermKey}}">{{ l.Term }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+    
+                          <div class="form-group ml-3 mt-2"> <br>
+                              <button name="btnGetScores" type="submit" class="btn btn-primary" style="font-weight: bolder;">GET SCORES</button>
+                          </div>
+                        </div>
+                      </form>
+            </div>    
+        </div>    
+    </div>    
+
+      <!-- Main content -->
+      <section class="content">
+        <div><h5 style="font-style: oblique; text-align:justify;">Critical or low scores ( < 2.5) </h5></div>
+        <br>
+        <div class="row">
+
+          <div class="col-md-5 ">
+            <div class="card card-primary card-outline p-1" >
+              <div class="card-header"><h5 class="card-title" style="font-style: oblique;">Critical district scores</h5></div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableDA" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 80%">District</th>
+                            <th style="width: 20%">Score </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for m in listDist %}
+                          <tr>
+                          <td>{{ m.District }}</td>
+                          <td>{{ m.Score }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+
+          <div class="col-md-5 ">
+            <div class="card card-primary card-outline p-1" >
+              <div class="card-header"><h5 class="card-title" style="font-style: oblique;">Critical department scores</h5></div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableDA" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 80%">Department</th>
+                            <th style="width: 20%">Score </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for m in listDept %}
+                          <tr>
+                          <td>{{ m.Department }}</td>
+                          <td>{{ m.Score }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+
+          
+        </div>
+
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-md-5">
+            <div class="card card-primary card-outline  p-1" >
+              <div class="card-header"><h5 class="card-title" style="font-style: oblique;">Critical district' department scores</h5></div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableCA" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 45%">District</th>
+                            <th style="width: 45%">Department</th>
+                            <th style="width: 10%;">Scores</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for m in listDistDept %}
+                          <tr>
+                          <td>{{ m.District }}</td>
+                          <td>{{ m.Department }}</td>
+                          <td>{{ m.Score }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+
+          <div class="col-md-5">
+            <div class="card card-primary card-outline  p-1" >
+              <div class="card-header"><h5 class="card-title" style="font-style: oblique;">Critical department' category scores</h5></div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="card">
+                  <div class="card-body">
+                    <table id="tableCA" class="table table-sm table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 45%">Department</th>
+                            <th style="width: 45%">Category</th>
+                            <th style="width: 10%;">Scores</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for m in listDeptCat %}
+                          <tr>
+                          <td>{{ m.Department }}</td>
+                          <td>{{ m.Category }}</td>
+                          <td>{{ m.Score }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- /.content -->
+      
+
+      
+{% endblock %}

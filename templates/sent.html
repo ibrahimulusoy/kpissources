@@ -1,0 +1,108 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-md-12">
+            <div class="card card-primary card-outline">
+              <div class="card-header">
+                <h3 class="card-title" style="font-style: oblique; text-align: center;">HPS KPI Metrics Portal Sent Messages and Task Assigments</h3>
+  
+                <!-- /.card-tools -->
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <div class="mailbox-controls">
+                  <!-- Check all button -->
+                  <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
+                  </button>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-sm"><i class="far fa-trash-alt"></i></button>
+                    <button type="button" class="btn btn-default btn-sm"><i class="fas fa-reply"></i></button>
+                    <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i></button>
+                  </div>
+                  <!-- /.btn-group -->
+                  <button type="button" class="btn btn-default btn-sm"><i class="fas fa-sync-alt"></i></button>
+                  <div class="float-right"> 1-50/200
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default btn-sm"><i class="fas fa-chevron-left"></i></button>
+                      <button type="button" class="btn btn-default btn-sm"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <!-- /.btn-group -->
+                  </div>
+                  <!-- /.float-right -->
+                </div>
+                <div class="table-responsive mailbox-messages">
+                   <table id="tableInbox" class="table table-bordered table-striped table-hover" style = "white-space: nowrap;">
+                    <thead>
+                        <tr>
+                            <th class=".w-auto" ></th>
+                            <th class=".w-auto" >Priority</th>
+                            <th class=".w-auto" >To</th>
+                            <th class=".w-auto" >Subject</th>
+                            <th class=".w-auto" >When</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in myBox %}
+                     <tr>
+                      <td>
+                        <div class="icheck-primary">
+                          <input type="checkbox" value="" id="check1">
+                          <label for="check1"></label>
+                        </div>
+                      </td>
+
+                      {% if m.top_priority == 'E' %}
+                        <td class="mailbox-star"><a href="#"><i class="fas fa-star text-warning"></i></a></td>
+                      {% else %}
+                        <td></td>
+                      {% endif %}
+                      <td class="mailbox-name"><a href="read-mail.html">{{ m.recipient_name }}</a></td>
+                      <td class="mailbox-subject">{{ m.subject }}</td>
+                      <td class="mailbox-date">{{ m.send_date_time }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- /.table -->
+                </div>
+                <!-- /.mail-box-messages -->
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer p-0">
+                <div class="mailbox-controls">
+                  <!-- Check all button -->
+                  <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
+                  </button>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-sm"><i class="far fa-trash-alt"></i></button>
+                    <button type="button" class="btn btn-default btn-sm"><i class="fas fa-reply"></i></button>
+                    <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i></button>
+                  </div>
+                  <!-- /.btn-group -->
+                  <button type="button" class="btn btn-default btn-sm"><i class="fas fa-sync-alt"></i></button>
+                  <div class="float-right">
+                    1-50/200
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default btn-sm"><i class="fas fa-chevron-left"></i></button>
+                      <button type="button" class="btn btn-default btn-sm"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <!-- /.btn-group -->
+                  </div>
+                  <!-- /.float-right -->
+                </div>
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </section>
+      <!-- /.content -->
+
+
+{% endblock %}

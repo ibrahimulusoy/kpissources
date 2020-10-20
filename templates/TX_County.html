@@ -1,0 +1,277 @@
+{% extends 'master_page.html' %}
+{% block body %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+
+<div>          
+    <form action="/map2" id = "mapForm" method="POST">
+      <input type="hidden" id = "varDistrictKey" name = "varDistrictKey" value="{{ distKey }}" >
+      <input type="hidden" id = "varTermKey" name = "varTermKey" value="{{ termKey }}" >
+      <input type="hidden" id = "varTermName" name = "varTermName" value="{{ termName }}" >
+    </form>
+</div> 
+
+
+<div class="row">    
+	<div class="col-5" >    
+		<div class="border-0 shadow mb-5 d-block guide-preview" >
+			<div id="map"></div>
+		</div>
+	</div>
+
+	<div class="col-7" >    
+		<div class="row">    		
+            <div class="content">
+                <h5 class="mb-2">Selected Term <strong>
+                  <label id="labelSelectedTerm" name="labelSelectedTerm" style="color: whitesmoke"></label>  
+                      {{termName}}
+                  </strong> 
+                </h5>
+              </div>
+        </div>
+        <div class="row">    		
+			<div class="card border-0 shadow mb-3 d-block guide-preview" >
+				<div class="p-4 d-flex align-items-center w-100">
+					<canvas id="mainChart" width="200px" height="275px" style="background-color: whitesmoke;"></canvas>
+		   		</div>
+			</div>
+			<div class="card border-0 shadow mb-3 d-block guide-preview" >
+				<div class="p-4 d-flex align-items-center w-100">
+					<canvas id="chartDepts" width="500px" height="275px" style="background-color: whitesmoke;"></canvas>
+		   		</div>
+			</div>
+        </div>
+        
+		<div class="row">    		
+			<div class="card border-0 shadow mb-3 d-block guide-preview" >
+				<div class="p-4 d-flex align-items-center w-100">
+					<canvas id="chartCampuses" width="700px" height="275px" style="background-color: whitesmoke;"></canvas>
+		   		</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+// main chart so selected district last terms scores
+var ctxMain = document.getElementById('mainChart').getContext('2d');
+steps = 1
+max = 4
+
+var mainChart = new Chart(ctxMain, 
+{
+    type: 'bar',
+    title:'HPS Scores',
+    scaleOverride: true,
+    scaleSteps: steps,
+    scaleStepWidth: Math.ceil(max / steps),
+    scaleStartValue: 0,
+    scaleShowVerticalLines: true,
+    scaleShowGridLines : true,
+    barShowStroke : true,
+    scaleShowLabels: true,
+
+    data: {
+        labels: 
+        [
+			{% for item in chartValuesDist %}
+               "{{ item.Term }}",
+            {% endfor %}
+        ],
+        datasets: 
+        [{
+            label: 'Score',
+            data: [
+            {% for item in chartValuesDist %}
+               "{{ item.Score }}",
+            {% endfor %}
+                    ],              
+        backgroundColor: [
+            {% for item in chartValuesDist %}
+                {% if item.Score <= 2.4: %}
+                    'red',
+                {% elif item.Score >= 2.5 and item.Score < 3: %}
+                    'yellow',
+                {% elif item.Score >= 3 and item.Score < 3.5: %}
+                    'blue',
+                {% elif item.Score >= 3.5: %}
+                    'green',
+                {% else: %}
+                    'orange',
+                {% endif %}
+
+            {% endfor %}
+        ],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)'],
+        borderWidth: 1
+        }]
+    },
+    
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            text: 'District Scores of past terms'
+        },
+        onClick: function(c,i) {                                
+                                e = i[0];
+                                var x_value = this.data.labels[e._index];
+                                var y_value = this.data.datasets[0].data[e._index];
+                                document.getElementById('varTermName').value = x_value;
+                                document.getElementById("mapForm").submit();
+                                //window.open('/map/'+ varDistrictKey + '/' + e._index, "_self")
+                            }
+    }
+});
+
+// chart dept
+var ctxDept = document.getElementById('chartDepts').getContext('2d');
+steps = 1
+max = 4
+
+var chartDepts = new Chart(ctxDept, 
+{
+    type: 'bar',
+    title:'All Departments Selected Term Scores',
+    scaleOverride: true,
+    scaleSteps: steps,
+    scaleStepWidth: Math.ceil(max / steps),
+    scaleStartValue: 0,
+    scaleShowVerticalLines: true,
+    scaleShowGridLines : true,
+    barShowStroke : true,
+    scaleShowLabels: true,
+
+    data: {
+        labels: 
+        [
+          {% for item in chartValuesDept %}
+           "{{ item.Department }}",
+          {% endfor %}
+        ],
+        datasets: 
+        [{
+            label: 'Score',
+            data: [
+            {% for item in chartValuesDept %}
+               "{{ item.Score }}",
+            {% endfor %}
+        
+        ],          
+        backgroundColor: [
+                        {% for item in chartValuesDept %}
+                            {% if item.Score <= 2.4: %}
+                                'red',
+                            {% elif item.Score >= 2.5 and item.Score < 3: %}
+                                'yellow',
+                            {% elif item.Score >= 3 and item.Score < 3.5: %}
+                                'blue',
+                            {% elif item.Score >= 3.5: %}
+                                'green',
+                            {% else: %}
+                                'orange',
+                            {% endif %}
+
+                        {% endfor %}
+                        ],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)',
+                          'rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)'],
+        borderWidth: 1
+        }]
+    },    
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            text: 'Selected term department scores'
+        }
+    }
+});
+
+
+var ctxCampus = document.getElementById('chartCampuses').getContext('2d');
+steps = 1
+max = 4
+
+
+var chartCampuses = new Chart(ctxCampus, 
+{
+    type: 'bar',
+    title: ' term scores of all campuses',
+    scaleOverride: true,
+    scaleSteps: steps,
+    scaleStepWidth: Math.ceil(max / steps),
+    scaleStartValue: 0,
+    scaleShowVerticalLines: true,
+    scaleShowGridLines : true,
+    barShowStroke : true,
+    scaleShowLabels: true,
+
+    data: {
+        labels: 
+        [
+          {% for item in chartValuesCmp %}
+           "{{ item.CampusShort }}",
+          {% endfor %}
+        ],
+        datasets: 
+        [{
+            label: 'Score',
+            data: [
+            {% for item in chartValuesCmp %}
+               "{{ item.Score }}",
+              {% endfor %}              
+        ],              
+        backgroundColor: [
+                        {% for item in chartValuesCmp %}
+                            {% if item.Score <= 2.4: %}
+                                'red',
+                            {% elif item.Score >= 2.5 and item.Score < 3: %}
+                                'yellow',
+                            {% elif item.Score >= 3 and item.Score < 3.5: %}
+                                'blue',
+                            {% elif item.Score >= 3.5: %}
+                                'green',
+                            {% else: %}
+                                'orange',
+                            {% endif %}
+
+                        {% endfor %}
+                        ],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)',
+                          'rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)'],
+        borderWidth: 1
+        }]
+    },    
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            text: 'Selected term campus scores'
+        }
+    }
+});
+
+
+</script>
+
+{% endblock %}
+

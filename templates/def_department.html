@@ -1,0 +1,151 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+{% if openType != 0 %}
+  <section class="section-preview text-center border-1" style="background-color: gainsboro;">
+    Your workflow steps and status
+    <button class="btn text-primary waves-effect waves-light"> Department Check <i class="fa fa-arrow-down"></i></button>
+    <button class="btn text-danger waves-effect waves-light"> District Check<i class="fa fa-arrow-right"></i></button>
+    <button class="btn text-danger waves-effect waves-light"> Campus Check <i class="fa fa-arrow-right"></i></button>
+  </section>
+{% endif %}
+<hr>
+
+  {% if openType == 0 %}
+    <h2>Departments view and updating<button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#frmModalDepartment">Add New Department</button> </h2>
+  {% else %}
+    <h2>Departments view and updating</h2>
+  {% endif %}
+  
+<div class="card">
+  <div class="card-body">
+    <table id="tableDepartment" class="table table-bordered table-striped table-hover table-sm">
+      <thead>
+      <tr>
+        <th data-id-field="RowID">Row ID</th>
+        <th>Key</th>
+        <th>Name</th>
+        <th>Short Name</th>
+        <th>Weight</th>
+        <th>Order No</th>
+        <th>Version</th>
+        <th>Active</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for d in depts %}
+      <tr>
+          <td>{{ d.RowID }} </td>
+          <td>{{ d.DepartmentKey }} </td>
+          <td>{{ d.Department }} </td>
+          <td>{{ d.DepartmentShort }} </td>
+          <td>{{ d.Weight }} </td>
+          <td>{{ d.OrderNo }} </td>
+          <td>{{ d.Version }} </t>
+          <td>{{ d.IsActive }} </td>
+          <td>
+            <a href="/department_upd/{{ d.RowID }}" class="btn btn-info btn-xs" data-toggle="modal" data-target="#frmModalDepartmentEdit{{ d.RowID }}"> <b> Edit </b></a>
+            <!-- <a href="/delete/{{ d.RowID }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete ?')">Delete</a> -->
+        </td>
+      </tr>
+        <!-- Modal Edit Department-->
+        <div id="frmModalDepartmentEdit{{ d.RowID }}" class="modal fade" role = "dialog">
+            <div class="modal-dialog">
+            <div class="modal-content">
+        <div class="modal-header"><h4 class="modal-title">Update Department Weight</h4></div>
+            <div class="modal-body">
+            <form action="{{ url_for('department_upd') }}" method="POST">
+            <div class="form-group">
+                <label>Department Key</label>
+                <input type="hidden"  name="RowID" value="{{ d.RowID }}">
+                <input type="text" class="form-control" name = "DepartmentKey" value = "{{ d.DepartmentKey }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Department Name</label>
+                <input type="text" class="form-control" name = "Department" value = "{{ d.Department }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>Short Name</label>
+              <input type="text" class="form-control" name = "DepartmentShort" value = "{{ d.DepartmentShort }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Weight</label>
+                <input type="number" step=".1" max="4" min = "0" class = "fom-control" name = "Weight" value="{{ d.Weight }}">
+            </div>
+            <div class="form-group">
+              <label>Order</label>
+              <input type="number" step="1" min = "1" max="100" class="form-control" name = "OrderNo" value = "{{ d.OrderNo }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>Version</label>
+              <input type="text" class="form-control" name = "Version" value = "{{ d.Version }}" readonly>
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <input type="text" class="form-control" name = "IsActive" value = "{{ d.IsActive }}" readonly>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Update Department</button>
+            </div>
+          </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Form</button>
+            </div>
+        </div>
+        </div>
+        </div>       
+      {% endfor %}
+    </tbody>
+      <tfoot>
+      <tr>
+        <th>Row ID</th>
+        <th>Key</th>
+        <th>Name</th>
+        <th>Short Name</th>
+        <th>Weight</th>
+        <th>Order No</th>
+        <th>Version</th>
+        <th>Active</th>
+        <th>Action</th>
+      </tr>
+      </tfoot>
+    </table>
+   </div>  
+
+  <!-- Modal Add Department -->
+  <div id="frmModalDepartment" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header"><h4 class="modal-title">Add New Department</h4></div>
+           <div class="modal-body">
+              <form action="/department_insert" method="POST">
+                <div class="form-group"><label>Row ID:</label><input type="number" class="form-control" name="RowID" required></div>
+                <div class="form-group"><label>Department Key:</label><input type="number" class="form-control" name="DepartmentKey" required></div>
+                <div class="form-group"><label>Department Name:</label><input type="text" class="form-control" name="Department" required></div>
+                <div class="form-group"><label>Short Name:</label><input type="text" class="form-control" name="DepartmentShort" required></div>
+                <div class="form-group"><label>Description:</label><input type="text" class="form-control" name="Description" required></div>
+                <div class="form-group"><label>Weight:</label><input type="number" class="form-control" name="Weight" step=".1" max="4" min = "0" required></div>
+                <div class="form-group"><label>Order No:</label><input type="number" class="form-control" name="OrderNo" required></div>
+                <div class="form-group"><label>Version:</label><input type="number" class="form-control" name="Version" required></div>
+
+                <div class="form-group"><button class="btn btn-primary" type="submit">Add New Department</button></div>
+              </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="modal-footer">
+    {% if openType != 0 %}
+    <a href="/home" class="btn btn-primary btn-default active" style="height: min-content;" role="button" aria-pressed="true">Back</a>
+    <a href="/pr_district" class="btn btn-success btn-default active" style="height: min-content;" role="button" aria-pressed="true">Next</a>
+    {% endif %}
+  </div>
+</div>
+</div>
+{% endblock %}
+

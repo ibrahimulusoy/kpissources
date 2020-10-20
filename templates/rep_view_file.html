@@ -1,0 +1,123 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+  <div class="row">
+      <div class="col-4">
+        <div class="card border-0 d-block guide-preview">
+            <div class="p-2 ml-3 d-flex align-items-center">
+                    <form action="/rep_view_file" id='formSelect' method="POST">
+                          <div class="form-group">
+                            <label>Semestre</label>
+                            <select class="form-control" id="cmbTerm" name="cmbTerm" style="width: min-content;">
+                                {% for l in listTerms %}
+                                  {% if prevVar is defined and l.TermKey == prevVar.TermKey %}
+                                    <option value="{{ l.TermKey}}" selected>{{ l.Term }}</option>
+                                  {% else %}
+                                    <option value="{{ l.TermKey}}">{{ l.Term }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+    
+                          <div class="form-group">
+                            <label>District</label>
+                            <select class="form-control" id="cmbDistrict" name="cmbDistrict" style="width: min-content;" onchange='if(this.value != 0) { this.form.submit(); }'>
+                                {% for l in listDists %}
+                                  {% if prevVar is defined and l.DistrictKey == prevVar.DistrictKey %}
+                                  <option value="{{ l.DistrictKey}}" selected>{{ l.District }}</option>
+                                  {% else %}
+                                    <option value="{{ l.DistrictKey}}">{{ l.District }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Campus</label>
+                            <select class="form-control" id="cmbCampus" name="cmbCampus" style="width: min-content;">
+                                {% for l in listCamps %}
+                                  {% if prevVar is defined and l.CampusKey == prevVar.CampusKey %}
+                                  <option value="{{ l.CampusKey}}" selected>{{ l.Campus }}</option>
+                                  {% else %}
+                                    <option value="{{ l.CampusKey}}">{{ l.Campus }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Department</label>
+                            <select class="form-control" id="cmbDepartment" name="cmbDepartment" style="width: min-content;" onchange='if(this.value != 0) { this.form.submit(); }'>
+                                {% for l in listDepts %}
+                                  {% if prevVar is defined and l.DepartmentKey == prevVar.DepartmentKey %}
+                                  <option value="{{ l.DepartmentKey}}" selected>{{ l.Department }}</option>
+                                  {% else %}
+                                    <option value="{{ l.DepartmentKey}}">{{ l.Department }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Category</label>
+                            <select class="form-control" id="cmbCategory" name="cmbCategory" style="width: min-content;"  onchange='if(this.value != 0) { this.form.submit(); }'>
+                                {% for l in listCats %}
+                                  {% if prevVar is defined and l.CategoryKey == prevVar.CategoryKey %}
+                                  <option value="{{ l.CategoryKey}}" selected>{{ l.CategoryShort }}</option>
+                                  {% else %}
+                                    <option value="{{ l.CategoryKey}}">{{ l.CategoryShort }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>KPI</label>
+                            <select class="form-control" id="cmbKpi" name="cmbKpi" style="width: 300px;">
+                                {% for l in listKPI %}
+                                  {% if prevVar is defined and l.KPIKey == prevVar.KPIKey %}
+                                  <option value="{{ l.RowID}}" selected>{{ l.KPI }}</option>
+                                  {% else %}
+                                    <option value="{{ l.RowID}}">{{ l.KPI }}</option>
+                                  {% endif %}                                  
+                                {% endfor %}
+                            </select>
+                          </div>
+
+                          <div class="form-group ml-3 mt-2"> <br>
+                              <button name="btnGetScores" type="submit" class="btn btn-primary" style="font-weight: bolder;">GET ARTIFACT URL/FILE</button>
+                          </div>
+
+                    </form>
+            </div>    
+        </div>    
+    </div>    
+
+    <div class="col-6">
+      <div class="card border-0 d-block guide-preview">
+          <div class="p-2 ml-3 d-flex align-items-center">
+                  <form action="/rep_view_file" id='formFileName' method="POST">
+                        <div class="form-group">
+                          <label>Artifact Url / File</label> <br>
+                          <textarea id='txtFileName' rows=2 cols="100%" readonly>{{ file_name }}</textarea>
+                        </div>
+
+                        <div class="form-group ml-3 mt-2"> <br>
+                          <button name="btnDownload" type="submit" class="btn btn-primary" style="font-weight: bolder;">DOWNLOAD FILE</button>
+                      </div>
+
+                  </form>
+          </div>    
+      </div>    
+    </div>    
+  </div>
+      <!-- Main content -->
+      <section class="content">
+
+        <!-- /.row -->
+      </section>
+      <!-- /.content -->
+      
+
+      
+{% endblock %}

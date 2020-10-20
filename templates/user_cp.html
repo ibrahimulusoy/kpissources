@@ -1,0 +1,53 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+<div class="row align-items-center">
+
+  <div class="card card-primary border-3 shadow p-2 align-items-center " style="width: 400px; align-items: center;">
+    <div class="card-title"><h4>Password Change</h4></div>
+    <!-- /.card-header -->
+    <!-- form start -->
+
+    <form role="form" id='frmCP' name='frmCP'>
+      <div class="card-body ">
+        <div class="form-group">
+          <label for="txtOld">Old password</label>
+          <input type="password" class="form-control" id="txtOld" name="txtOld" placeholder="Old">
+        </div>
+        <div class="form-group">
+          <label for="txtNew">New password</label>
+          <input type="password" class="form-control" id="txtNew" name="txtNew" placeholder="New" minlength="5" maxlength="15">
+        </div>
+        <div class="form-group">
+            <label for="txtConfirm">Confirm password</label>
+            <input type="password" class="form-control" id="txtConfirm" name="txtConfirm" placeholder="New" minlength="5" maxlength="15">
+          </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-primary">Change Password</button>
+      </div>
+    </form>
+  </div>
+
+  {% if mess is defined and mess is not none %}
+  <div class="col-3">    
+    <div class="card border-3 shadow mb-2 d-block guide-preview align-items-center p-3 " style="background-color: gainsboro;">
+      {% if messType == 'Error' %}
+        <div class="card card-danger">
+      {% else %}
+        <div class="card card-success">
+      {% endif %}
+      
+        <div class="card-header">
+          <h3 class="card-title">Message Board</h3>
+        </div>
+        <div class="card-body" style="background-color: #fdffb6;">
+          <h6 id="headMessage" name="headMessage">{{ mess }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

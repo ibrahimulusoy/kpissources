@@ -1,0 +1,501 @@
+{% extends 'master_page.html' %}
+
+
+{% block body %}
+<section class="section-preview text-center border-1" style="background-color: gainsboro;">
+  Your workflow steps and status
+  <button class="btn text-success waves-effect waves-light" > Category Check <i class="fa fa-check"></i></button>
+  <button class="btn text-success waves-effect waves-light"> KPI Check<i class="fa fa-check"></i></button>
+  <button class="btn text-success waves-effect waves-light"> Campus Level Manuel KPI Score Entry <i class="fa fa-check" aria-hidden="true"></i></button>
+  <button class="btn text-primary waves-effect waves-light" > District Level Manuel KPI Score Entry <i class="fa fa-arrow-down"></i></button>
+</section>
+<br>
+
+<div class="row">
+  <div class="col-9">
+    <div class="card border-0 d-block guide-preview bg-info shadow" style=" text-align: center; height: 30px;">
+      DISTRICT LEVEL MANUEL KPI SCORE ENTRY
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="card border-1 d-block guide-preview bg-info shadow" style="text-align: center; height: 30px;">
+      <strong> {{ session['UserDepartmentName'] }}    &    {{currentTerm }} </strong>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  
+  <div class="col-9">
+    <div class="row">
+      <div class="card border-0 d-block guide-preview rounded-sm bg-info" style="width: max-content;">
+        <div class="p-1 d-flex ml-1 mr-1">
+          <div class="btn-group">
+            <button type="button" class="btn btn-light text-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Select KPI
+            </button>
+            <div class="dropdown-menu" id="ComboKPI" name="ComboKPI">
+              <a class="dropdown-header" href="#">Category and KPI Name</a>
+              {% for s in listKPI %}
+                <a class="dropdown-item" value = "{{s.RowID}}" href="#"
+                    onclick="return SetSelectedValues('{{s.RowID}}', '{{s.KPIKey}}', '{{s.KPI}}', '{{ s.CategoryKey}}', '{{ s.Category}}', '{{s.Description}}', '{{s.Weight}}')">{{ s.Category}} --> {{s.KPI}} </a>
+              {% endfor %}
+            </div>
+          </div>
+          <div id="txtKPIKey" class="p-2 text-primary bg-light ml-2">{{defKPI[1]}}</div> 
+          <form name="hiddenForm" type="hidden" action="/pr_dist_man_entry" method="POST">
+            <input type="hidden" id = "txtKPIRowID" name = "txtKPIRowID" value= {{defKPI[0]}} >
+            <input type="hidden" id = "txtKPICategoryKey" name = "txtKPICategoryKey" value= {{defKPI[3]}}>
+            <input type="hidden" id = "txtKPIWeight" name = "txtKPIWeight" value= {{defKPI[9]}}>
+            <input type="hidden" id = "txtArtifactURL" name = "txtArtifactURL" value="">           
+          </form>          
+          <div id="txtKPICategory" class="p-2 text-primary bg-light ml-1">{{defKPI[4]}}</div> 
+          <div id="txtKPIName" class="p-2 text-primary bg-light ml-1">{{defKPI[6]}}</div> 
+
+          <div class="align-items-center ml-3">
+            <form action="/pr_dist_man_entry" method="POST">
+              <input type="hidden" id = "varDistrictKeyGet" name = "varDistrictKeyGet" 
+              {% if selDist is defined %}
+                value="{{ selDist }}"
+              {% endif %}
+              >
+            </form>
+          </div>
+                    
+          <br>
+        </div>
+        <div id="txtKPIDesc" class="p-2 text-secondary bg-light ml-2 mb-2 mr-1" data-placeholder = "Description" >{{defKPI[7]}}</div>
+
+      </div>
+    </div>  
+       
+  </div>  
+  
+  <div class="col-3">          
+    <div class="small-box bg-info border-2 shadow" style="color: maroon;">
+      <div class="p-2 ml-2">
+        <strong> Score Entry Information</strong> <br> 
+        <small>
+          1) You should choose district, department and get related KPI list. <br>
+          2) Type score of each KPI. <br>
+          3) Save all typed scores for the selected department and district.
+        </small>
+      </div>
+    </div>    
+  </div>
+  
+</div>
+
+
+{% if listDists is defined %}
+
+<div class="card">
+  <div class="card-body">
+    <div class="toast bg-success" id="myToastSuccess" style="position: absolute; top: 0; right: 0;">
+      <div class="toast-header">
+          <strong class="mr-auto"><i class="fa fa-grav"></i> Score entry result</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="toast-body">
+          <div>Your score has been saved successfully.</div>
+      </div>
+    </div>
+
+    <div class="toast bg-success" id="myToastSuccessBulk" style="position: absolute; top: 0; right: 0;">
+      <div class="toast-header">
+          <strong class="mr-auto"><i class="fa fa-grav"></i> All Score entry result</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="toast-body">
+          <div>All scores have been saved successfully.</div>
+      </div>
+    </div>
+
+    <div class="toast bg-danger" id="myToastError" style="position: absolute; top: 0; right: 0;">
+      <div class="toast-header">
+          <strong class="mr-auto"><i class="fa fa-grav"></i> Score entry result</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="toast-body">
+          <div>Your score has not been saved. Please try again.</div>
+      </div>
+    </div>
+
+    <table id="tableDistManEntry" class="table table-bordered table-striped table-hover table-sm" style=" width: 100%;">
+      <thead>
+        <tr>
+          <th >Key</th>
+          <th id="colKPIName">District Name</th>
+          <th id="colScoreOld" style="text-align: center;">Score</th>
+          <th id="colStatus" style="text-align: center;">Status</th>
+          <th id="colScoreH" data-id-field="Score" style="text-align: center;">New Score</th>
+          <th>Artifact Url</th>
+          <th id="colAction" >Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr> 
+        {% for c in listDists %}
+        <tr>
+          <td id="colRowID" name="colRowID" hidden data-row-id='0' data-type="DistrictRowID">{{ c.RowID }} </td>
+          <td id="colKey" name="colKey" style="width: 10%;" data-row-id='{{ c.RowID }}' data-type="DistrictKey">{{ c.DistrictKey }} </td>
+          <td style="width: 30%;">{{ c.District }} </td>
+          {% if c.CurrentScore|int < 0 %}
+            <td style="width: 5%; text-align: center;">None</td>
+            <td class = "text-danger" style="width: 5%; text-align: center; font-weight:bolder "><i class="fa fa-minus" aria-hidden="true" title="Score not entered before!"></i></td>
+          {% else %}
+            <td id="colCurrentScore" name="colCurrentScore" data-row-id='{{ c.RowID }}' data-type="CurrentScore" style="width: 5%; text-align: center;">{{c.CurrentScore|int}}</td>
+            <td class = "text-success" style="width: 5%; text-align: center;"><i class="fa fa-check" aria-hidden="true" title="Score entered before."></i></td> 
+          {% endif %}
+
+          <td style="width: 10%; text-align: center;">
+            <input type="number" id="colScore" name="colScore" step="1"  min="0" max="4" maxlength="4" data-row-id='{{ c.RowID }}' data-type="EnteredScore" value="{{ c.Score }}" 
+                style="background-color:rgb(red, green, blue); font-weight: bolder; text-align: center;">
+          <td style="width: 40%;">
+            <input type="input" class="form-control" id = "colArtifactUrl" name = "colArtifactUrl" minlength="30" data-row-id='{{ c.RowID }}' data-type="EnteredArtifactUrl"  
+                  value="{{c.CurrentArtifactURL}}"                   
+                  style="height: 30px; width: 100%; background-color: rgb(203, 234, 243)" placeholder="Google drive excel file link" 
+                required> </td>
+          </td>
+          <td style="width: 5%;"> 
+            <!-- <a href="/" class="btn btn-success btn-xs" onclick="insertScore(); return false"> <b> Score Update</b> </a>-->
+            <button type="button" id="btnUpdate" value=""  data-row-id='{{ c.RowID }}' data-score-id='{{ c.Score }}' text class="btn btn-primary btn-sm active" onclick="OneScoreInsert({{c.RowID}}, {{c.Score}})"> Update</button>           
+          </td>
+        </tr> 
+        {% endfor %}
+      </tbody>
+    </table>
+    
+  </div>  
+  
+  <div class="modal-footer">
+        <button class="btn btn-primary active" style="height: min-content;" role="button" aria-pressed="true" id="btnSave" name="btnSave" onclick="bulkScoreInsert();" >Update All Scores</button>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <a href="/pr_cmp_man_entry" class="btn btn-primary btn-default active" style="height: min-content;" role="button" aria-pressed="true">Back</a>
+  <a href="/home" class="btn btn-success btn-default active" style="height: min-content;" role="button" aria-pressed="true">Complete</a>  
+</div>
+
+{% endif %}
+
+
+<!-- END OF PAGE   -->
+
+<!-- <script>   -->
+  <script>
+    $("#btnUpdate").on("click",function(e){
+      var rowid = $(this).data("row-id");
+      var score = $(this).data("score-id");
+console.log(rowid,score);
+     // OneScoreInsert(rowid,score);
+
+    });
+
+    function changeColorDistrict(btnName) 
+    { 
+      document.getElementById('varDistrictKeyList').value = document.getElementById(btnName).value;
+      //document.getElementById('labelSelectedDistrict').innerHTML = document.getElementById(btnName).innerText; 
+      
+      changeDistrictButtonsBackColor(btnName);
+    }
+    
+    function changeColorDepartment(btnName) 
+    { 
+      document.getElementById('varDepartmentKeyList').value = document.getElementById(btnName).value;
+      //document.getElementById('labelSelectedDistrict').innerHTML = document.getElementById(btnName).innerText; 
+      
+      changeDepartmentButtonsBackColor(btnName);
+    }        
+    
+    function changeDistrictButtonsBackColor(btnName) 
+    { 
+      var x = document.getElementById("secDistrict");
+      var y = x.getElementsByTagName("button");
+      var i;
+      for (i = 0; i < y.length; i++) {
+        y[i].classList.remove("bg-success");
+        y[i].classList.add("bg-light");
+      }
+      
+      var x = document.getElementById(btnName);
+      if (x.classList.contains("bg-light")) 
+      {
+        x.classList.remove("bg-light");
+        x.classList.add("bg-success");
+      } 
+      else 
+      {
+        x.classList.remove("bg-success");
+        x.classList.add("bg-light");
+      }          
+    }
+    
+    function changeDepartmentButtonsBackColor(btnName) 
+    { 
+      var x = document.getElementById("secDepartment");
+      var y = x.getElementsByTagName("button");
+      var i;
+      for (i = 0; i < y.length; i++) {
+        y[i].classList.remove("bg-success");
+        y[i].classList.add("bg-light");
+      }
+      
+      var x = document.getElementById(btnName);
+      if (x.classList.contains("bg-light")) 
+      {
+        x.classList.remove("bg-light");
+        x.classList.add("bg-success");
+      } 
+      else 
+      {
+        x.classList.remove("bg-success");
+        x.classList.add("bg-light");
+      }          
+    }
+    
+    
+    function clickGetScore() 
+    {
+      var varDistrictKey = document.getElementById('varDistrictKey').value;
+      var varTermKey = document.getElementById('varTermKey').value;
+      if (varDistrictKey == null || varDistrictKey == '') {alert("PLEASE SELECT DISTRICT" ); return false; }
+      else if (varTermKey == null || varTermKey == '') {alert("PLEASE SELECT SEMESTRE" ); return false; }
+    }
+    
+    function clickGetKPIList() 
+    {
+      var varDistrictKey = document.getElementById('varDistrictKey').value;
+      var varTermKey = document.getElementById('varTermKey').value;
+      if (varDistrictKey == null || varDistrictKey == '') {alert("PLEASE SELECT DISTRICT" ); return false; }
+      else if (varTermKey == null || varTermKey == '') {alert("PLEASE SELECT SEMESTRE" ); return false; }
+    }
+    
+    function getCategoryScores(TermKey, DepartmentKey) 
+    {
+      var varDistrictKey = document.getElementById('varDistrictKey').value;
+      window.open('/rep_cat/' + TermKey + '/' + varDistrictKey + '/' + DepartmentKey, "_self")
+    }
+    
+    function getCategoryKPIScores(TermKey, DepartmentKey, CategoryKey) 
+    {
+      var varDistrictKey = document.getElementById('varDistrictKey').value;
+      window.open('/rep_cat_kpi/' + TermKey + '/' + varDistrictKey + '/' + DepartmentKey + '/' + CategoryKey, "_self")
+    }
+    
+    function getKPIScores(TermKey, DepartmentKey, CategoryKey) 
+    {
+      var varDistrictKey = document.getElementById('varDistrictKey').value;
+      var varDistrictKey = document.getElementById('varDistrictKey').value;
+      window.open('/rep_kpi2/' + TermKey + '/' + varDistrictKey + '/' + DepartmentKey + '/' + CategoryKey, "_blank")
+    }
+    
+    function bulkScoreInsert()
+    {
+      /*
+      var rowids = [];
+      rowids = $('input[type="number"][data-type="EnteredScore"]').map(function () { return $(this).data("row-id")})
+      alert('rowids ' + rowids)
+
+      var scores = $('input[type="number"][data-type="EnteredScore"]').map(function () { return $(this).get()[0].value})
+      alert('scores ' + scores)
+      */
+
+      /*
+      var selectedIDs = $('input[type="text"][data-type="EnteredArtifactUrl"]').map(function () { return $(this).data("row-id") }).get();
+
+      var myTableArray = [];
+      $('input[type="text"][data-type="EnteredArtifactUrl"]').map(function () { return myTableArray.push([ $(this).data("row-id"),$(this).get()[0].value])})
+
+      var ArrayID = [];
+      var ArrayURL = [];
+      $('input[type="text"][data-type="EnteredArtifactUrl"]').map(function () 
+        { 
+          ArrayURL.push([$(this).get()[0].value]);
+          ArrayID.push([ $(this).data("row-id")]);
+          return ArrayURL, ArrayID;
+        }
+      )
+      */
+      
+      var ArrayIDs = [];
+      var ArrayKeys = [];
+      var ArrayScores = [];
+      var ArrayURL = [];
+
+      var myTable = document.getElementById('tableDistManEntry');
+      for (i = 1; i < myTable.rows.length; i++) 
+      {
+        ArrayKeys.push([myTable.rows[i].cells[1].innerText]);
+      }
+      alert('ArrayKeys '+ArrayKeys)
+
+      $('input[type="input"][data-type="EnteredArtifactUrl"]').map(function () 
+        { 
+          ArrayURL.push([$(this).get()[0].value]);
+          return ArrayURL;
+        }
+      )
+      alert('ArrayURL '+ArrayURL)
+
+
+      $('input[type="number"][data-type="EnteredScore"]').map(function () 
+        { 
+          ArrayScores.push([$(this).get()[0].value]);
+          ArrayIDs.push([ $(this).data("row-id")]);
+
+          return ArrayIDs, ArrayScores;
+        }
+      )
+      alert('ArrayScores '+ArrayScores)
+      alert('ArrayIDs '+ArrayIDs)
+
+      // post body -> data: myTableArray
+      var varKPIRowID = document.getElementById('txtKPIRowID').value;
+      var varKPICategoryKey = document.getElementById('txtKPICategoryKey').value;
+      var varKPIWeight = document.getElementById('txtKPIWeight').value;
+      //indvidual score
+      //var varMyScore = $('input[type="number"][data-type="EnteredScore"][data-row-id="' + DistrictRowID + '"]').get()[0].value;   
+      
+      var url = '/pr_dist_man_entry_bulk'; 
+      var postData = "arrayIDs=" + ArrayIDs + "&arrayKeys=" + ArrayKeys + "&arrayScores=" + ArrayScores + "&arrayURLs=" + ArrayURL + "&varKPICategoryKey=" + varKPICategoryKey + "&varKPIRowID=" + varKPIRowID + "&varKPIWeight=" + varKPIWeight
+      $.ajax({
+              type: "POST",
+              url: url,
+              cache: false,
+              data: postData,
+              success:
+                  function (response) 
+                  {
+                    if (response && response.status && response.status == "OK")
+                    {
+                      $("#myToastSuccessBulk").toast('show');
+                    }
+                    else if (response.status === "error" && response.error)
+                    {
+                      alert('hata olustu. hata mesaji:' + response.error);  
+                      $("#myToastError").toast('show');
+                    }
+                  },
+                  error: function(x,y,z)
+                  {
+                    alert(z);                  
+                  }
+                });      
+    }
+
+    function OneScoreInsert(DistrictRowID, Score) 
+    {
+      alert('OneScoreInsert')
+      var varArtifactUrl = $('input[type="input"][data-type="EnteredArtifactUrl"][data-row-id="' + DistrictRowID + '"]').get()[0].value;
+      alert('varArtifactUrl' + varArtifactUrl)
+      if (varArtifactUrl.length < 20) 
+      {
+        alert("Google drive link must be min 30 characters")
+        return;
+      }
+
+      var res = varArtifactUrl.includes("https://drive.google.com");
+      if (res == false) 
+      {
+        alert("Entered Artifact URL must be google drive link!")
+        return;
+      }
+
+      //indvidual score
+      var varMyScore = $('input[type="number"][data-type="EnteredScore"][data-row-id="' + DistrictRowID + '"]').get()[0].value;   
+      alert('varMyScore ' + varMyScore)
+
+      //var varDistrictKey = document.getElementById('varDistrictKeyList').value;
+      //var varDepartmentKey = document.getElementById('varDepartmentKeyList').value;
+      
+      var varKPIRowID = document.getElementById('txtKPIRowID').value;
+      var varKPICategoryKey = document.getElementById('txtKPICategoryKey').value;
+      var varKPIWeight = document.getElementById('txtKPIWeight').value;
+      
+      var url = '/pr_dist_man_entry_upd'; 
+      var postData = "KPIRowID=" + varKPIRowID + "&score=" + varMyScore + "&varKPIWeight=" + varKPIWeight + "&varDistrictRowID=" + DistrictRowID + "&varKPICategoryKey=" + varKPICategoryKey + "&varArtifactURL=" + varArtifactUrl
+      $.ajax({
+              type: "POST",
+              url: url,
+              cache: false,
+              data: postData,
+              success:
+                  function (response) 
+                  {
+                    if (response && response.status && response.status == "OK")
+                    {
+                      alert('skor basarili olarak guncellendi');
+                      $("#myToastSuccess").toast('show');
+                    }
+                    else if (response.status === "error" && response.error)
+                    {
+                      alert('hata olustu. hata mesaji:' + response.error);  
+                      $("#myToastError").toast('show');
+                    }
+                  },
+                  error: function(x,y,z){
+                    alert(z);                  }
+                });
+      
+    }            
+
+    function checkLength(el) 
+    {
+      if (el.value.length != 6) 
+      {
+        alert("Google drive link must be min 30 characters")
+      }
+    }
+
+    function SetSelectedValues(KPIRowID, KPIKey, KPIName, CategoryKey, Category, Desc, Weight) 
+    {
+        document.getElementById('txtKPIRowID').value = KPIRowID;
+        document.getElementById('txtKPIKey').innerText = KPIKey;
+        document.getElementById('txtKPIName').innerText = KPIName;
+        document.getElementById('txtKPICategoryKey').value = CategoryKey;
+        document.getElementById('txtKPICategory').innerText = Category;
+        document.getElementById('txtKPIDesc').innerText = Desc;
+        document.getElementById('txtKPIWeight').value = Weight;
+
+        // buradan sayfayi yeniden cagiracagiz
+        document.hiddenForm.submit();
+        
+        //const str = txt.split("-->")
+        
+        // var varMyScore = $('tableDistManEntry[type="number"][data-type="score"][data-row-id="' + KPIRowID + '"]').get()[0].value;
+        //document.getElementById('colScore').value = 0;
+        
+        /*
+        var myTable = document.getElementById('tableDistManEntry');
+        for (i = 1; i < myTable.rows.length; i++) 
+        {
+          //myTable.cell( i, 2 ).data(0).draw();
+          //myTable.cell( i, 1 ).data('yyasin').draw();
+
+          myTable.rows[i].cells[2].value = 0;
+          myTable.rows[i].cells[1].innerText = 'aaa';
+        }
+        */
+
+    }
+
+</script>
+
+{% endblock %}
+          

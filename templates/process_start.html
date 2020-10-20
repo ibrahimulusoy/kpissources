@@ -1,0 +1,29 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+
+<div class="row justify-content-center">    
+<div class="col-4">    
+    <div class="card border-0 shadow mb-5 d-block guide-preview">
+        <div class="p-4 d-flex align-items-center w-100">
+            <div class="w-100 text-left ">
+                <div class="card bg-gradient-info">
+                    <div class="card-header" style="font-size: larger; background-color: cadetblue;"> HPS KPI Metrics Project is starting</div>
+                    <div class="card-header text-center" style="font-size: larger; "> STEPS</div>
+                    <div class="card-header"><span class="badge badge-light">1) </span>  Task assignment</div>
+                    <div class="card-header"><span class="badge badge-light">2) </span>  Check & Update weights</div>
+                    <div class="card-header"><span class="badge badge-light">3) </span>  Campus level Automatic KPI scores process start </div>
+                    <div class="card-header"><span class="badge badge-light">4) </span>  District level Automatic KPI scores process start</div>
+                    <div class="card-header"><span class="badge badge-light">5) </span>  Campus level Manuel KPI scores entry </div>
+                    <div class="card-header"><span class="badge badge-light">6) </span>  District level Manuel KPI scores entry</div>
+                    <div class="card-header"><span class="badge badge-light">7) </span>  All levels scores calculation</div>
+                    <div class="card-header"><span class="badge badge-light">8) </span>  All levels scores verification</div>
+                    <div class="card-header"><span class="badge badge-light">9) </span>  Send e-mail notification to related users</div>
+                </div>
+                    <div class="card-footer text-muted text-center"><a href="/insert_process_task" class="btn btn-success btn-lg active align-items-center" role="button" aria-pressed="true">START</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

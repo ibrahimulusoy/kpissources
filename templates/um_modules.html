@@ -1,0 +1,89 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+  <h2>Modules view and updating 
+    <button type="button"  class="btn btn-success float-right" style="text-align: right;" data-toggle="modal" data-target="#frmModalModule">Add New Module</button>  </h2>
+
+<div class="card">
+    <div class="card-body">
+    <table id="tableModules" class="table table-bordered table-striped table-hover table-sm">
+      <thead>
+      <tr>
+        <th data-id-field="MODUL_ID"  style="width: 25px;">Module ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>URL / LINK</th>
+        <th>File Name</th>
+        <th>Parent ID</th>
+        <th style="width: 20px;">A/P</th>
+        <th style="width: 20px;">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for c in modules %}
+      <tr>
+          <td>{{ c.MODUL_ID }} </td>
+          <td>{{ c.MODULE_NAME }} </td>
+          <td>{{ c.DESCRIPTION }} </td>
+          <td>{{ c.MODULE_URL }} </td>
+          <td>{{ c.FILE_NAME }} </t>
+          <td>{{ c.PARENT_ID }} </td>
+          <td>{{ c.status }} </td>
+          <td>            
+            <a href="/um_module_upd/{{ c.MODUL_ID }}" class="btn btn-info btn-xs" data-toggle="modal" data-target="#frmModalModuleEdit{{ c.MODUL_ID }}"> <b> Edit </b></a>
+            <!--
+            <a href="/delete/{{ c.RowID }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete ?')">Delete</a> -->
+        </td>
+      </tr>
+      {% endfor %}
+      
+    </tbody>
+      <tfoot>
+      <tr>
+        <th>Row ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>URL / LINK</th>
+        <th>File Name</th>
+        <th>Parent ID</th>
+        <th>Active</th>
+        <th>Action</th>
+      </tr>
+      </tfoot>
+    </table>
+   </div>  
+
+  <!-- Modal Add Employee 
+  <div id="frmModalCategory" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header"><h4 class="modal-title">Add New Category</h4></div>
+           <div class="modal-body">
+				<form action="" method="POST">
+				  <div class="form-group">
+				   <label>Name:</label>
+				   <input type="text" class="form-control" name="name" required="1">
+				  </div>
+				  <div class="form-group">
+				   <label>Email:</label>
+				   <input type="email" class="form-control" name="email" required="1">
+				  </div>
+				  <div class="form-group">
+				   <label>Phone:</label>
+				   <input type="number" class="form-control" name="phone" required="1">
+				  </div>
+				  <div class="form-group">
+				  <button class="btn btn-primary" type="submit">Add Employee</button>
+				  </div>
+				 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+  </div>
+-->
+</div>
+</div>
+{% endblock %}

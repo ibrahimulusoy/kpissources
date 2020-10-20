@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>HARMONY - KPI Metrics Portal Application</title>
+  <link rel="stylesheet" href="http://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='plugins/fontawesome-free/css/all.min.css') }}">
+                          
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='docs/assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+                              
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/adminlte.min.css') }}">
+  
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+  <style type="text/css">
+      table td { word-wrap: break-word;max-width:100px; }            
+  </style>
+
+<script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+  <div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-dark">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav" >
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="/home" class="nav-link">Home</a>
+      </li>
+    </ul>
+
+    <!-- SEARCH FORM 
+    <form class="form-inline ml-3" vertical-align="right">
+      <div class="input-group input-group-sm">
+        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search on portal">
+        <div class="input-group-append">
+          <button class="btn btn-navbar" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </form> -->
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container <aside class="main-sidebar sidebar-dark-primary elevation-4" > --> 
+  <aside class="main-sidebar sidebar-dark-danger elevation-4 align-items" > <!--  control-sidebar-dark --> 
+    <!-- Brand Logo -->
+    <a href="/home" class="brand-link" style="text-align: center;">
+      <!--  <img src="dist/img/HPS-logo-white-small.jpg" alt="" class="brand-image img-circle elevation-5" -->
+       <img src="{{ url_for('static', filename='dist/img/HPS-logo-white-small.png') }}" alt="" class="rounded"
+                 style="opacity: .8; width:150px;height:60px; vertical-align: middle; align-items: center; ">
+       
+       <!-- <span class="brand-text font-weight-light">AdminLTE 3</span> -->
+    </a>
+    <br>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex" style="background-color: rgb(43, 43, 43);">
+        <div class="image mt-3">
+          <img src="{{ url_for('static', filename='dist/img/avatar5.png') }}" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info mt-3 ml-2">
+          <a href="#" class="d-block" style="color: rgb(240, 167, 11); font-size: larger;">{{ session['UserFullName'] }}</a>
+        </div>
+        <br>        
+      </div>
+      
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2" >
+        <ul class="nav nav-pills nav-sidebar text-sm flex-column text-white " data-widget="treeview" role="menu" data-accordion="true">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+
+          <!-- PRIVATE INBOX -->
+          <li class="nav-item has-treeview menu-open" >
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-inbox"></i>
+              <p> PRIVATE INBOX <i class="right fas fa-angle-left"></i> </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/home" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Inbox</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/task_archive" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Archive</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+          <!-- KPI Process -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-running"></i>
+              <p> KPI PROCESS <i class="right fas fa-angle-left"></i> </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="/pr_start" class="nav-link">
+                <i class="fas fa-angle-right nav-icon"></i>
+                <p>Process Start</p>
+              </a>
+            </li>
+              <li class="nav-item">
+                <a href="/pr_category" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Weights & Scores Entry</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/pr_department" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Weights (Dept/Dist/Campus)</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/pr_dist_man_entry" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>District Score Entry (2)</p>
+                </a>
+              </li>             
+
+              <li class="nav-item">
+                <a href="/pr_monitor" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Process Monitoring</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/pr_mntr_sum" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Calculate Monitoring</p>
+                </a>
+              </li>
+              
+              <li class="nav-item">
+                <a href="/pr_end" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>End The Process</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+			    <!-- SCORES -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-line"></i>
+              <p> SCORE VIEWS<i class="right fas fa-angle-left"></i> </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item"><a href="/rep_do/1" class="nav-link"><i class="fas fa-caret-right nav-icon"></i><p>District Score View</p></a></li>
+              <li class="nav-item"><a href="/rep_do/2" class="nav-link"><i class="fas fa-caret-right nav-icon"></i><p>District Score Colored View</p></a></li>
+              <li class="nav-item"><a href="/rep_cmp" class="nav-link"><i class="fas fa-caret-right nav-icon"></i><p>Campus Score Cards</p></a></li>
+              <li class="nav-item"><a href="/rep_list_kpi" class="nav-link"><i class="fas fa-caret-right nav-icon"></i><p>Campus Scores List View</p></a></li>
+              <li class="nav-item"><a href="/bar" class="nav-link"><i class="fas fa-caret-right nav-icon"></i><p>Bar Chart Scores</p></a></li>
+              <li class="nav-item"><a href="/rep_low" class="nav-link"><i class="fas fa-caret-right nav-icon"></i><p>Critical/low Scores</p></a></li>
+            </ul>
+          </li>
+
+          <!-- DASHBOARD -->
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link" >
+            <i class="nav-icon fas fa-chart-pie"></i>
+            <p> DASHBOARD <i class="right fas fa-angle-left"></i> </p>
+          </a>
+          <ul class="nav nav-treeview" >
+            <li class="nav-item">
+              <a href="/map/20" class="nav-link">
+                <i class="fas fa-caret-right nav-icon"></i>
+                <p>Head office</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-caret-right nav-icon"></i>
+                <p>District level</p>
+              </a>
+            </li>
+          </ul>
+          </li>
+
+          <!-- DEFINITIONS -->
+		      <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-th-list"></i>
+              <p> DEFINITIONS <i class="right fas fa-angle-left"></i> </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/corporation" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+				          <p>Corporation</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/def_district" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>District</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/def_campus" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Campus</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/def_department" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Department</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="def_category" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Category</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/def_kpi" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>KPI</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+			    <!-- USER MANAGEMENT -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-users-cog"></i>
+              <p> USER MANAGEMENT <i class="right fas fa-angle-left"></i> </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/um_modules" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Modules</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/um_roles" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Roles</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/um_users" class="nav-link">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Users</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- USER PROFILE -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link"  >
+              <i class="nav-icon fas fa-id-card"></i>
+              <p> USER <i class="right fas fa-angle-left"></i> </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fas fa-id-card-alt nav-icon"></i>
+                  <p>My Profile</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/ucp" class="nav-link">
+                  <i class="fas fa-unlock-alt nav-icon"></i>
+                  <p>Change Password</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/login" class="nav-link">
+                  <i class="fas fa-door-open nav-icon"></i>
+                  <p>Logout</p>
+                </a>
+            </ul>
+          </li>
+
+    </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+        <!-- CHILD BODY -->
+    <div id = "divChild" class="p-3">
+      {% block body %} 
+      
+      {% endblock %}
+    </div>
+
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2020 <a href="https://harmonytx.org">HARMONY Public Schools</a>.</strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 1.0.0
+    </div>
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+
+<!-- REQUIRED SCRIPTS -->
+
+<script>
+  
+    $(document).ready(function()
+      {
+        $('#tableKPIList').DataTable({
+            autoWidth: true,
+            fixedColumns: false,
+            "pageLength": 25,
+            "iDisplayLength": 25
+        });
+      });
+  
+      $(document).ready(function()
+      {
+        $('#tableDistKPIManuelEntry').DataTable({
+            //autoWidth: true,
+            fixedColumns: false,
+            "pageLength": 100,
+            "iDisplayLength": 100,
+            "scrollY": '500px',
+            "sScrollX": '1000px'          
+        });
+      });
+  
+  </script>
+<!-- jQuery -->
+<!-- <script src="https://code.jquery.com/jquery-3.3.1.js"></script> -->
+<!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
+
+
+
+
+<!-- Bootstrap -->
+
+<script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.js" integrity="sha256-JFzlEUS2cZGdNFhVNH3GSFuqZFLjzWIjOqG5BY+Yhvw=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/extensions/editable/bootstrap-table-editable.min.js" integrity="sha256-VGZp4wumnp3aWOSTDM+z/4e7n10AGMhba2RvlxYj7ZY=" crossorigin="anonymous"></script>
+
+<!--  <script src="extensions/editable/bootstrap-table-editable.js"></script>  -->
+<!-- overlayScrollbars -->
+<script src="{{ url_for('static', filename='docs/assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ url_for('static', filename='dist/js/adminlte.js') }}"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script src="{{ url_for('static', filename='dist/js/demo.js') }}"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script src="{{ url_for('static', filename='plugins/jquery-mousewheel/jquery.mousewheel.js') }}"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="{{ url_for('static', filename='plugins/jquery-mapael/jquery.mapael.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/jquery-mapael/maps/usa_states.min.js') }}"></script>
+<!-- ChartJS -->
+<script src="{{ url_for('static', filename='plugins/chart.js/Chart.min.js') }}"></script>
+
+<!-- PAGE SCRIPTS -->
+<!-- <script src="{{ url_for('static', filename='dist/js/pages/dashboard2.js') }}"></script> -->
+
+<!--  <script src="assets/bootstrap.min.js"></script>  -->
+<!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
+
+<script src="{{ url_for('static', filename='dist/js/mapdata.js') }}"></script>
+<script src="{{ url_for('static', filename='dist/js/statemap.js') }}"></script>
+
+
+
+</body>
+</html>

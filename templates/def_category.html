@@ -1,0 +1,149 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+  {% if openType != 0 %}
+    <section class="section-preview text-center border-1" style="background-color: gainsboro;">
+      Your workflow steps and status
+      <button class="btn text-primary waves-effect waves-light" > Category Check <i class="fa fa-arrow-down"></i></button>
+      <button class="btn text-danger waves-effect waves-light"> KPI Check<i class="fa fa-arrow-right"></i></button>
+      <button class="btn text-danger waves-effect waves-light"> Campus Level Manuel KPI Score Entry <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+      <button class="btn text-danger waves-effect waves-light" > District Level Manuel KPI Score Entry <i class="fa fa-arrow-right"></i></button>
+    </section>
+    <br>
+  {% endif %}
+
+<hr>
+{% if openType == 0 %}
+<h2>Categories view and updating<button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#frmModalCategory">Add New Category</button> </h2>
+{% else %}
+<h2>Categories view and updating</h2>
+{% endif %}
+    
+<div class="card">
+  <div class="card-body">
+    <table id="tableCategory" class="table table-bordered table-striped table-hover table-sm">
+      <thead>
+      <tr>
+        <th data-id-field="RowID">Row ID</th>
+        <th>Category Key</th>
+        <th>Category</th>
+        <th>CategoryShort</th>
+        <th>Version</th>
+        <th>Department Key</th>
+        <th>Department</th>
+        <th>Active</th>
+        <th>Order No</th>
+        <th>Weight</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for c in cats %}
+      <tr>
+          <td>{{ c.RowID }} </td>
+          <td>{{ c.CategoryKey }} </td>
+          <td>{{ c.Category }} </td>
+          <td>{{ c.CategoryShort }} </td>
+          <td>{{ c.Version }} </t>
+          <td>{{ c.DepartmentKey }} </td>
+          <td>{{ c.Department }} </td>
+          <td>{{ c.IsActive }} </td>
+          <td>{{ c.OrderNo }} </td>
+          <td>{{ c.Weight }} </td>
+          <td>
+            <a href="/category_upd/{{ c.RowID }}" class="btn btn-info btn-xs" data-toggle="modal" data-target="#frmModalCategoryEdit{{ c.RowID }}"> <b> Edit </b></a>
+            <!-- <a href="/delete/{{ c.RowID }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete ?')">Delete</a> -->
+        </td>
+      </tr>
+        <!-- Modal Edit Category-->
+        <div id="frmModalCategoryEdit{{ c.RowID }}" class="modal fade" role = "dialog">
+            <div class="modal-dialog">
+            <div class="modal-content">
+        <div class="modal-header"><h4 class="modal-title">Update Category Weight</h4></div>
+            <div class="modal-body">
+            <form action="{{ url_for('category_upd') }}" method="POST">
+            <div class="form-group">
+                <label>Department</label>
+                <input type="hidden"  name="RowID" value="{{ c.RowID }}">
+                <input type="text" class="form-control" name = "Department" value = "{{ c.Department }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Category Name</label>
+                <input type="text" class="form-control" name = "Category" value = "{{ c.Category }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Weight</label>
+                <input type="number" step=".1" max="4" min = "0" class = "form-control" name = "Weight" value="{{ c.Weight }}">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Update Category</button>
+            </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Form</button>
+            </div>
+        </div>
+        </div>
+        </div>       
+      {% endfor %}
+    </tbody>
+      <tfoot>
+      <tr>
+        <th>Row ID</th>
+        <th>Category Key</th>
+        <th>Category</th>
+        <th>CategoryShort</th>
+        <th>Version</th>
+        <th>Department Key</th>
+        <th>Department</th>
+        <th>Active</th>
+        <th>Order No</th>
+        <th>Weight</th>
+        <th>Action</th>
+      </tr>
+      </tfoot>
+    </table>
+   </div>  
+
+  <!-- Modal Add Employee-->
+  <div id="frmModalCategory" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header"><h4 class="modal-title">Add New Category</h4></div>
+           <div class="modal-body">
+				<form action="" method="POST">
+				  <div class="form-group">
+				   <label>Name:</label>
+				   <input type="text" class="form-control" name="name" required="1">
+				  </div>
+				  <div class="form-group">
+				   <label>Email:</label>
+				   <input type="email" class="form-control" name="email" required="1">
+				  </div>
+				  <div class="form-group">
+				   <label>Phone:</label>
+				   <input type="number" class="form-control" name="phone" required="1">
+				  </div>
+				  <div class="form-group">
+				  <button class="btn btn-primary" type="submit">Add Employee</button>
+				  </div>
+				 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="modal-footer">
+    {% if openType != 0 %}
+    <a href="/home" class="btn btn-primary btn-default active" style="height: min-content;" role="button" aria-pressed="true">Back</a>
+    <a href="/pr_kpi" class="btn btn-success active" style="height: min-content;" role="button" aria-pressed="true">Next</a>
+    {% endif %}
+
+  </div>
+</div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,112 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+<hr>
+
+<h2>Manage <b> ROLES</b>
+    <button type="button"  class="btn btn-success float-right" data-toggle="modal" data-target="#frmModalRoles">Add New Role</button> </h2>
+
+<div class="card">
+  <div class="card-body">
+    <table id="tableRoles" class="table table-bordered table-striped table-hover table-sm ">
+      <thead>
+      <tr>
+        <th data-id-field="RoleID" style="width: 10%;">Role ID</th>
+        <th style="width: 30%;">Name</th>
+        <th style="width: 40%;">Description</th>
+        <th style="width: 10%;">Active</th>
+        <th style="width: 10%;">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for c in roles %}
+      <tr>
+          <td>{{ c.role_id }} </td>
+          <td>{{ c.role_name }} </td>
+          <td>{{ c.DESCRIPTION }} </td>
+          <td>{{ c.status }} </td>
+          <td>
+            <a href="" class="btn btn-info btn-xs" data-toggle="modal" data-target="#"> <b> Edit </b></a>
+          </td>
+      </tr>
+      <!-- Modal Edit Category-->
+<!--
+        <div id="frmModalRoleEdit{{ c.RowID }}" class="modal fade" role = "dialog">
+            <div class="modal-dialog">
+            <div class="modal-content">
+        <div class="modal-header"><h4 class="modal-title">Update Role Weight</h4></div>
+            <div class="modal-body">
+            <form action="{{ url_for('category_upd') }}" method="POST">
+            <div class="form-group">
+                <label>Department</label>
+                <input type="hidden"  name="RowID" value="{{ c.RowID }}">
+                <input type="text" class="form-control" name = "Department" value = "{{ c.Department }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Category Name</label>
+                <input type="text" class="form-control" name = "Category" value = "{{ c.Category }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Weight</label>
+                <input type="number" step=".1" max="4" min = "0" class = "form-control" name = "Weight" value="{{ c.Weight }}">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Update Role</button>
+            </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Form</button>
+            </div>
+        </div>
+        </div>
+        </div>   
+    -->    
+      {% endfor %}
+    </tbody>
+      <tfoot>
+      <tr>
+        <th>Row ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Active</th>
+        <th>Action</th>
+      </tr>
+      </tfoot>
+    </table>
+   </div>  
+
+  <!-- Modal Add Employee-->
+  <div id="frmModalRoles" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header"><h4 class="modal-title">Add New Role</h4></div>
+           <div class="modal-body">
+				<form action="" method="POST">
+				  <div class="form-group">
+				   <label>Name:</label>
+				   <input type="text" class="form-control" name="name" required="1">
+				  </div>
+				  <div class="form-group">
+				   <label>Email:</label>
+				   <input type="email" class="form-control" name="email" required="1">
+				  </div>
+				  <div class="form-group">
+				   <label>Phone:</label>
+				   <input type="number" class="form-control" name="phone" required="1">
+				  </div>
+				  <div class="form-group">
+				  <button class="btn btn-primary" type="submit">Add Employee</button>
+				  </div>
+				 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+

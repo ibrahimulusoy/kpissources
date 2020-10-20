@@ -1,0 +1,24 @@
+{% extends 'master_page.html' %}
+
+{% block body %}
+
+
+<div class="row justify-content-center">    
+    <div class="col-5">    
+        <div class="card border-0 shadow mb-5 d-block guide-preview">
+        <div class="p-4 d-flex align-items-center w-100">
+            <div class="w-100 text-center ">
+                <div class="card bg-gradient-info">
+                    <div class="card-header" style="font-size: larger; background-color: cadetblue;"> Calculate Scores and Finish Process</div>
+                    <div class="card-body"  style="font-size: larger; "> All KPI Metrics project process are done. <br>
+                                           Now, You can press the button for calculate scores <br> and finish...</div>
+                    <div class="card-body"  style="font-size: larger; "> send completion verification e-mails  </div>
+                    <div class="card-footer text-muted"><a href="/process_end_update" class="btn btn-success btn-lg active" role="button" aria-pressed="true">VERIFY & END PROCESS</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

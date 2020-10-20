@@ -1,0 +1,271 @@
+{% extends 'master_page.html' %}
+{% block body %}
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+
+<div class="row">    
+  <div class="col-3" >    
+    <div class="card border-0 shadow mb-5 d-block guide-preview" >
+      <div class="p-4 d-flex align-items-center w-100">
+          <canvas id="mainChart" width="200px" height="200px" style="background-color: whitesmoke;"></canvas>
+     </div>
+    </div>
+  </div>
+
+  <div class="col-3">    
+    <div class="card border-0 shadow mb-5 d-block guide-preview">
+      <div class="p-4 d-flex align-items-center w-100">
+        <canvas id="chartDists" width="200px" height="200px" style="background-color: lightgoldenrodyellow"></canvas>
+     </div>
+    </div>
+  </div>
+
+  <div class="col-4">    
+    <div class="card border-0 shadow mb-5 d-block guide-preview">
+      <div class="p-4 d-flex align-items-center w-100">
+        <canvas id="chartDepts" width="280px" height="200px"></canvas>
+     </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">    
+  <div class="col-10" >    
+    <div class="card border-0 shadow mb-5 d-block guide-preview" >
+      <div class="p-4 d-flex align-items-center w-100">
+          <canvas id="chartCampuses" width="800px" height="200px" style="background-color: whitesmoke;"></canvas>
+     </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+var ctxCampus = document.getElementById('chartCampuses').getContext('2d');
+steps = 1
+max = 4
+
+var chartCampuses = new Chart(ctxCampus, 
+{
+    type: 'bar',
+    title:'All Campuses Selected Term Scores',
+    scaleOverride: true,
+    scaleSteps: steps,
+    scaleStepWidth: Math.ceil(max / steps),
+    scaleStartValue: 0,
+    scaleShowVerticalLines: true,
+    scaleShowGridLines : true,
+    barShowStroke : true,
+    scaleShowLabels: true,
+
+    data: {
+        labels: 
+        [
+          {% for item in chartValuesCmp %}
+           "{{ item.CampusShort }}",
+          {% endfor %}
+        ],
+        datasets: 
+        [{
+            label: 'Score',
+            data: [
+            {% for item in chartValuesCmp %}
+               "{{ item.Score }}",
+              {% endfor %}              
+        ],              
+        backgroundColor: ['rgba(255, 99, 132, 0.2)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)',
+                          'rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)',
+                          'rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)'],
+        borderWidth: 1
+        }]
+    },    
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            text: 'All Campuses Selected Term Scores'
+        }
+    }
+});
+
+
+var ctx3 = document.getElementById('chartDepts').getContext('2d');
+steps = 1
+max = 4
+
+var chartDepts = new Chart(ctx3, 
+{
+    type: 'bar',
+    title:'All Departments Selected Term Scores',
+    scaleOverride: true,
+    scaleSteps: steps,
+    scaleStepWidth: Math.ceil(max / steps),
+    scaleStartValue: 0,
+    scaleShowVerticalLines: true,
+    scaleShowGridLines : true,
+    barShowStroke : true,
+    scaleShowLabels: true,
+
+    data: {
+        labels: 
+        [
+          {% for item in chartValuesDept %}
+           "{{ item.Department }}",
+          {% endfor %}
+        ],
+        datasets: 
+        [{
+            label: 'Score',
+            data: [
+            {% for item in chartValuesDept %}
+               "{{ item.Score }}",
+              {% endfor %}              
+        ],              
+        backgroundColor: ['rgba(255, 99, 132, 0.2)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)',
+                          'rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)',
+                          'rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)'],
+        borderWidth: 1
+        }]
+    },    
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            text: 'All Departments Selected Term Scores'
+        }
+    }
+});
+
+
+var ctx2 = document.getElementById('chartDists').getContext('2d');
+steps = 1
+max = 4
+
+var chartDists = new Chart(ctx2, 
+{
+    type: 'bar',
+    title:'DISTRICT SCORE COMPARES BY TERM',
+    scaleOverride: true,
+    scaleSteps: steps,
+    scaleStepWidth: Math.ceil(max / steps),
+    scaleStartValue: 0,
+    scaleShowVerticalLines: true,
+    scaleShowGridLines : true,
+    barShowStroke : true,
+    scaleShowLabels: true,
+
+    data: {
+        labels: 
+        [
+          {% for item in chartValuesDist %}
+           "{{ item.District }}",
+          {% endfor %}
+        ],
+        datasets: 
+        [{
+            label: 'Score',
+            data: [
+            {% for item in chartValuesDist %}
+               "{{ item.Score }}",
+              {% endfor %}              
+        ],              
+        backgroundColor: ['rgba(75, 192, 192, 1)','rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)'],
+        borderWidth: 1
+        }]
+    },    
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            text: 'All District Current Term Scores'
+        }
+    }
+});
+
+var ctx = document.getElementById('mainChart').getContext('2d');
+steps = 1
+max = 4
+
+
+var mainChart = new Chart(ctx, 
+{
+    type: 'bar',
+    title:'test',
+    scaleOverride: true,
+    scaleSteps: steps,
+    scaleStepWidth: Math.ceil(max / steps),
+    scaleStartValue: 0,
+    scaleShowVerticalLines: true,
+    scaleShowGridLines : true,
+    barShowStroke : true,
+    scaleShowLabels: true,
+
+    data: {
+        labels: 
+        [
+          {% for item in chartValues %}
+           "{{ item.Term }}",
+          {% endfor %}
+        ],
+        datasets: 
+        [{
+            label: 'Score',
+            data: [
+            {% for item in chartValues %}
+               "{{ item.Score }}",
+              {% endfor %}
+              
+        ],              
+        backgroundColor: ['rgba(255, 99, 132, 1)' ,'rgba(54, 162, 235, 1)','rgba(255, 206, 86, 0.2)','rgba(75, 192, 192, 0.2)','rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)','rgba(54, 162, 235, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)','rgba(255, 159, 64, 1)'],
+        borderWidth: 1
+        }]
+    },
+    
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            text: 'Harmony All Term Scores'
+        },
+        onClick: function(c,i) {
+                                
+                                e = i[0];
+                                var x_value = this.data.labels[e._index];
+                                var y_value = this.data.datasets[0].data[e._index];
+                                window.open('/bar/' + e._index, "_self")
+                            }
+    }
+});
+
+
+</script>
+{% endblock %}
